@@ -4,20 +4,25 @@ const emailInput = document.querySelector("#email");
 const companyInput = document.querySelector("#company");
 const passwordInput = document.querySelector("#password");
 const confirmPasswordInput = document.querySelector("#confirm-password");
-const createAccountButton = document.querySelector(".btn-primary");
 
 // The page now uses JavaScript validation instead of browser validation.
 signupForm.noValidate = true;
-createAccountButton.type = "submit";
 
 function getUsers() {
   const savedUsers = localStorage.getItem("crm_users");
 
-  if (savedUsers) {
-    return JSON.parse(savedUsers);
+  if (!savedUsers) {
+    return [];
   }
 
-  return [];
+  try {
+    const users = JSON.parse(savedUsers);
+
+    return Array.isArray(users) ? users : [];
+  } catch (error) {
+    console.error("Failed to read users:", error);
+    return [];
+  }
 }
 
 function saveUsers(users) {
@@ -71,40 +76,32 @@ function validateForm() {
   const password = passwordInput.value;
   const confirmPassword = confirmPasswordInput.value;
 
-  if (fullName === "") {
-    showError(fullNameInput, "Full name is required.");
-    isValid = false;
-  } else if (fullName.length < 3) {
-    showError(fullNameInput, "Full name must be at least 3 characters.");
+  if (fullName.length < 3) {
+    showError(fullNameInput, "Full name must be at least 3 characters");
     isValid = false;
   }
 
-  if (email === "") {
-    showError(emailInput, "Email is required.");
-    isValid = false;
-  } else {
-    const atPosition = email.indexOf("@");
-    const dotPosition = email.indexOf(".", atPosition + 1);
+  const atPosition = email.indexOf("@");
+  const dotPosition = email.indexOf(".", atPosition + 1);
 
-    if (atPosition === -1 || dotPosition === -1) {
-      showError(emailInput, "Please enter a valid email address.");
-      isValid = false;
-    }
+  if (email === "" || atPosition === -1 || dotPosition === -1) {
+    showError(emailInput, "Please enter a valid email address");
+    isValid = false;
   }
 
-  if (password.length < 8) {
-    showError(passwordInput, "Password must be at least 8 characters.");
-    isValid = false;
-  } else if (!/[a-z]/i.test(password)) {
-    showError(passwordInput, "Password must contain at least one letter.");
-    isValid = false;
-  } else if (!/[0-9]/.test(password)) {
-    showError(passwordInput, "Password must contain at least one number.");
+  const containsLetter = /[a-zA-Z]/.test(password);
+  const containsNumber = /[0-9]/.test(password);
+
+  if (password.length < 8 || !containsLetter || !containsNumber) {
+    showError(
+      passwordInput,
+      "Password must be at least 8 characters and contain a letter and a number"
+    );
     isValid = false;
   }
 
   if (confirmPassword !== password) {
-    showError(confirmPasswordInput, "Passwords do not match.");
+    showError(confirmPasswordInput, "Passwords do not match");
     isValid = false;
   }
 
@@ -122,7 +119,7 @@ signupForm.addEventListener("submit", function (event) {
   const users = getUsers();
   const email = emailInput.value.trim().toLowerCase();
   const emailAlreadyExists = users.some(function (user) {
-    return user.email.toLowerCase() === email;
+    return (user.email || "").toLowerCase() === email;
   });
 
   if (emailAlreadyExists) {
