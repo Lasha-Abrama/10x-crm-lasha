@@ -10,6 +10,20 @@ const createAccountButton = document.querySelector(".btn-primary");
 signupForm.noValidate = true;
 createAccountButton.type = "submit";
 
+function getUsers() {
+  const savedUsers = localStorage.getItem("crm_users");
+
+  if (savedUsers) {
+    return JSON.parse(savedUsers);
+  }
+
+  return [];
+}
+
+function saveUsers(users) {
+  localStorage.setItem("crm_users", JSON.stringify(users));
+}
+
 function clearErrors() {
   const errorMessages = document.querySelectorAll(".error-message");
   const formInputs = document.querySelectorAll(".form-input");
@@ -81,7 +95,32 @@ signupForm.addEventListener("submit", function (event) {
   event.preventDefault();
   clearErrors();
 
-  if (validateForm()) {
-    console.log("Validation passed");
+  if (!validateForm()) {
+    return;
   }
+
+  const users = getUsers();
+  const email = emailInput.value.trim().toLowerCase();
+  const emailAlreadyExists = users.some(function (user) {
+    return user.email.toLowerCase() === email;
+  });
+
+  if (emailAlreadyExists) {
+    showError(emailInput, "An account with this email already exists");
+    return;
+  }
+
+  const newUser = {
+    id: Date.now(),
+    fullName: fullNameInput.value.trim(),
+    email: emailInput.value.trim().toLowerCase(),
+    password: passwordInput.value,
+    company: companyInput.value.trim(),
+    createdAt: new Date().toISOString()
+  };
+
+  users.push(newUser);
+  saveUsers(users);
+  console.log("User saved successfully");
+  signupForm.reset();
 });
