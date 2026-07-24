@@ -737,7 +737,7 @@ img {
 
 .dashboard-grid {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-columns: minmax(280px, 0.72fr) minmax(0, 1.28fr);
   gap: 1rem;
   margin-top: 1rem;
 }
@@ -749,7 +749,7 @@ img {
 
 .pipeline-grid {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
+  grid-template-columns: 1fr;
   gap: 0.75rem;
 }
 
@@ -933,7 +933,7 @@ img {
 
 .client-card {
   display: grid;
-  grid-template-columns: auto minmax(0, 1fr) minmax(150px, auto) auto;
+  grid-template-columns: auto minmax(0, 1fr) auto auto;
   align-items: center;
   gap: 1.25rem;
   padding: 1.15rem 1.25rem;
@@ -993,18 +993,23 @@ img {
 }
 
 .client-status-control {
-  width: 144px;
+  display: flex;
+  align-items: center;
+  gap: 0.6rem;
+  width: auto;
 }
 
 .client-status-control .form-label {
-  margin-bottom: 0.35rem;
+  margin-bottom: 0;
   color: var(--color-text-muted);
   font-size: 0.68rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
+  white-space: nowrap;
 }
 
 .client-status-control .form-select {
+  width: 136px;
   min-height: 40px;
   padding: 0.5rem 2.25rem 0.5rem 0.75rem;
   font-size: 0.84rem;
@@ -1219,6 +1224,13 @@ img {
   margin-top: 1rem;
 }
 
+.reminder-status {
+  min-height: 1.4rem;
+  margin-top: 0.65rem;
+  font-size: 0.82rem;
+  text-align: right;
+}
+
 .client-notes-section {
   margin-top: 2rem;
   box-shadow: var(--shadow-card);
@@ -1266,26 +1278,32 @@ img {
 
 .profile-layout {
   display: grid;
-  grid-template-columns: 1fr;
+  grid-template-areas:
+    "overview password"
+    "data password";
+  grid-template-columns: minmax(300px, 0.82fr) minmax(440px, 1.18fr);
   gap: 1rem;
   align-items: start;
   margin-top: 2rem;
 }
 
 .profile-overview {
-  grid-column: 1;
+  grid-area: overview;
 }
 
-.profile-password,
+.profile-password {
+  grid-area: password;
+}
+
 .profile-data {
-  height: auto;
+  grid-area: data;
 }
 
 .profile-data {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 2rem;
+  align-items: flex-start;
+  flex-direction: column;
+  gap: 1rem;
   padding-top: 1.15rem;
   padding-bottom: 1.15rem;
 }
@@ -1300,18 +1318,15 @@ img {
 }
 
 #change-password-form {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr)) auto;
-  gap: 1rem;
-  align-items: start;
+  display: block;
 }
 
 #change-password-form .form-group {
-  margin-bottom: 0;
+  margin-bottom: 1.1rem;
 }
 
 #change-password-form > .btn {
-  margin-top: 1.73rem;
+  margin-top: 0;
   white-space: nowrap;
 }
 
@@ -1532,25 +1547,6 @@ html[data-ten-x-mode="true"] .pipeline-value {
     justify-self: stretch;
   }
 
-  #change-password-form {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  #change-password-form > .btn {
-    grid-column: 1 / -1;
-    justify-self: start;
-    margin-top: 0;
-  }
-
-  .client-card {
-    grid-template-columns: auto minmax(0, 1fr);
-  }
-
-  .client-status-control,
-  .client-card-actions {
-    grid-column: 2;
-  }
-
 }
 
 @media (max-width: 820px) {
@@ -1589,8 +1585,17 @@ html[data-ten-x-mode="true"] .pipeline-value {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  .dashboard-grid,
   .pipeline-grid {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
+    grid-template-columns: 1fr;
+  }
+
+  .profile-layout {
+    grid-template-areas:
+      "overview"
+      "password"
+      "data";
+    grid-template-columns: 1fr;
   }
 
   .client-details-grid {
@@ -1694,10 +1699,6 @@ html[data-ten-x-mode="true"] .pipeline-value {
     width: 100%;
   }
 
-  #change-password-form {
-    grid-template-columns: 1fr;
-  }
-
   #change-password-form > .btn {
     width: 100%;
   }
@@ -1748,6 +1749,10 @@ html[data-ten-x-mode="true"] .pipeline-value {
   .client-details-actions .btn,
   .form-actions .btn {
     width: 100%;
+  }
+
+  .reminder-status {
+    text-align: left;
   }
 
   .client-details-identity,

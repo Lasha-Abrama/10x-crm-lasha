@@ -13,6 +13,7 @@ const clientDealValueElement = document.querySelector("#client-deal-value");
 const clientCreatedElement = document.querySelector("#client-created");
 const editClientButton = document.querySelector("#edit-client-button");
 const reminderButton = document.querySelector("#reminder-button");
+const reminderStatus = document.querySelector("#reminder-status");
 const deleteClientButton = document.querySelector("#delete-client-button");
 const editClientForm = document.querySelector("#edit-client-form");
 const cancelEditButton = document.querySelector("#cancel-edit-button");
@@ -325,11 +326,18 @@ function setClientReminder() {
   }
 
   const clientName = client.name;
+  const reminderTime = new Date(Date.now() + 60000).toLocaleTimeString([], {
+    hour: "2-digit",
+    minute: "2-digit"
+  });
 
   showMessage("Reminder set ✓", "success");
+  reminderStatus.textContent =
+    `Reminder scheduled for ${reminderTime}. Keep this page open.`;
 
   setTimeout(function () {
     showMessage(`⏰ Follow up: ${clientName}`, "success");
+    reminderStatus.textContent = `Reminder delivered for ${clientName}.`;
   }, 60000);
 }
 
