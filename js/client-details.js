@@ -6,6 +6,7 @@ const clientCompanyElement = document.querySelector("#client-company");
 const clientStatusElement = document.querySelector("#client-status");
 const clientCreatedElement = document.querySelector("#client-created");
 const editClientButton = document.querySelector("#edit-client-button");
+const reminderButton = document.querySelector("#reminder-button");
 const deleteClientButton = document.querySelector("#delete-client-button");
 const editClientForm = document.querySelector("#edit-client-form");
 const cancelEditButton = document.querySelector("#cancel-edit-button");
@@ -243,6 +244,23 @@ function displayClientDetails() {
   renderNotes(notes);
 }
 
+function setClientReminder() {
+  const client = getClientById();
+
+  if (!client) {
+    showMessage("Client not found.", "error");
+    return;
+  }
+
+  const clientName = client.fullName;
+
+  showMessage("Reminder set ✓", "success");
+
+  setTimeout(function () {
+    showMessage(`⏰ Follow up: ${clientName}`, "success");
+  }, 60000);
+}
+
 function deleteClient() {
   const shouldDelete = confirm(
     "Are you sure you want to delete this client?"
@@ -291,6 +309,7 @@ cancelEditButton.addEventListener("click", function () {
 });
 
 deleteClientButton.addEventListener("click", deleteClient);
+reminderButton.addEventListener("click", setClientReminder);
 
 addNoteForm.addEventListener("submit", function (event) {
   event.preventDefault();
