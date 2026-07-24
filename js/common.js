@@ -1,5 +1,6 @@
 const logoutButton = document.getElementById("logout-button");
 const themeToggleButton = document.getElementById("theme-toggle");
+const brandMark = document.querySelector(".brand-mark");
 
 function getSavedTheme() {
   const savedTheme = localStorage.getItem("crm_theme");
@@ -78,6 +79,19 @@ if (themeToggleButton) {
 
 if (logoutButton) {
   logoutButton.addEventListener("click", logout);
+}
+
+if (brandMark) {
+  brandMark.title = "Hold Shift and click to unlock 10X Mode";
+
+  brandMark.addEventListener("click", function (event) {
+    if (!event.shiftKey) {
+      return;
+    }
+
+    event.preventDefault();
+    activateTenXMode();
+  });
 }
 
 // Easter egg: type "10X" while focus is outside a form field.
