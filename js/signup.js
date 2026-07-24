@@ -24,6 +24,26 @@ function saveUsers(users) {
   localStorage.setItem("crm_users", JSON.stringify(users));
 }
 
+function showMessage(message, type) {
+  const toastContainer = document.querySelector(".toast-container");
+  const toast = document.createElement("div");
+
+  toast.classList.add("toast");
+
+  if (type === "success") {
+    toast.classList.add("toast-success");
+  } else {
+    toast.classList.add("toast-error");
+  }
+
+  toast.textContent = message;
+  toastContainer.appendChild(toast);
+
+  setTimeout(function () {
+    toast.remove();
+  }, 3000);
+}
+
 function clearErrors() {
   const errorMessages = document.querySelectorAll(".error-message");
   const formInputs = document.querySelectorAll(".form-input");
@@ -121,6 +141,10 @@ signupForm.addEventListener("submit", function (event) {
 
   users.push(newUser);
   saveUsers(users);
-  console.log("User saved successfully");
   signupForm.reset();
+  showMessage("Account created successfully! Please log in.", "success");
+
+  setTimeout(() => {
+    window.location.href = "index.html";
+  }, 1500);
 });
