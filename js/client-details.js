@@ -1,9 +1,7 @@
 const clientDetailsContent = document.querySelector("#client-details-content");
 const clientNotFoundMessage = document.querySelector("#client-not-found");
 const clientAvatarElement = document.querySelector("#client-avatar");
-const clientAvatarFallback = document.querySelector(
-  "#client-avatar-fallback"
-);
+const clientAvatarFallback = document.querySelector("#client-avatar-fallback");
 const clientNameElement = document.querySelector("#client-name");
 const clientEmailElement = document.querySelector("#client-email");
 const clientPhoneElement = document.querySelector("#client-phone");
@@ -22,7 +20,7 @@ const editClientEmailInput = document.querySelector("#edit-client-email");
 const editClientCompanyInput = document.querySelector("#edit-client-company");
 const editClientStatusInput = document.querySelector("#edit-client-status");
 const editClientDealValueInput = document.querySelector(
-  "#edit-client-deal-value"
+  "#edit-client-deal-value",
 );
 const addNoteForm = document.querySelector("#add-note-form");
 const noteTextInput = document.querySelector("#note-text");
@@ -51,12 +49,18 @@ function getClientById() {
 }
 
 function getClientInitials(name) {
-  const nameParts = (name || "").trim().split(" ").filter(function (part) {
-    return part !== "";
-  });
-  const initials = nameParts.slice(0, 2).map(function (part) {
-    return part.charAt(0);
-  }).join("");
+  const nameParts = (name || "")
+    .trim()
+    .split(" ")
+    .filter(function (part) {
+      return part !== "";
+    });
+  const initials = nameParts
+    .slice(0, 2)
+    .map(function (part) {
+      return part.charAt(0);
+    })
+    .join("");
 
   return initials.toUpperCase() || "?";
 }
@@ -82,10 +86,10 @@ function updateEditStatusStyle() {
     "status-select-lead",
     "status-select-contacted",
     "status-select-won",
-    "status-select-lost"
+    "status-select-lost",
   );
   editClientStatusInput.classList.add(
-    `status-select-${editClientStatusInput.value.toLowerCase()}`
+    `status-select-${editClientStatusInput.value.toLowerCase()}`,
   );
 }
 
@@ -122,7 +126,7 @@ function populateEditForm(client) {
 function clearEditErrors() {
   const errorMessages = editClientForm.querySelectorAll(".error-message");
   const formFields = editClientForm.querySelectorAll(
-    ".form-input, .form-select"
+    ".form-input, .form-select",
   );
 
   errorMessages.forEach(function (errorMessage) {
@@ -145,31 +149,23 @@ function validateEditForm() {
   const email = editClientEmailInput.value.trim().toLowerCase();
   const status = editClientStatusInput.value;
   const dealValueText = editClientDealValueInput.value.trim();
-  const nameError = editClientNameInput.parentElement.querySelector(
-    ".error-message"
-  );
-  const emailError = editClientEmailInput.parentElement.querySelector(
-    ".error-message"
-  );
-  const statusError = editClientStatusInput.parentElement.querySelector(
-    ".error-message"
-  );
-  const dealValueError = editClientDealValueInput.parentElement.querySelector(
-    ".error-message"
-  );
+  const nameError =
+    editClientNameInput.parentElement.querySelector(".error-message");
+  const emailError =
+    editClientEmailInput.parentElement.querySelector(".error-message");
+  const statusError =
+    editClientStatusInput.parentElement.querySelector(".error-message");
+  const dealValueError =
+    editClientDealValueInput.parentElement.querySelector(".error-message");
 
   if (name === "") {
-    showEditError(
-      editClientNameInput,
-      nameError,
-      "Name is required."
-    );
+    showEditError(editClientNameInput, nameError, "Name is required.");
     isValid = false;
   } else if (name.length < 3) {
     showEditError(
       editClientNameInput,
       nameError,
-      "Name must be at least 3 characters."
+      "Name must be at least 3 characters.",
     );
     isValid = false;
   }
@@ -185,7 +181,7 @@ function validateEditForm() {
       showEditError(
         editClientEmailInput,
         emailError,
-        "Please enter a valid email address."
+        "Please enter a valid email address.",
       );
       isValid = false;
     }
@@ -198,7 +194,7 @@ function validateEditForm() {
     showEditError(
       editClientStatusInput,
       statusError,
-      "Please select a valid status."
+      "Please select a valid status.",
     );
     isValid = false;
   }
@@ -210,14 +206,14 @@ function validateEditForm() {
       showEditError(
         editClientDealValueInput,
         dealValueError,
-        "Deal value must be a number."
+        "Deal value must be a number.",
       );
       isValid = false;
     } else if (dealValue < 0) {
       showEditError(
         editClientDealValueInput,
         dealValueError,
-        "Deal value cannot be negative."
+        "Deal value cannot be negative.",
       );
       isValid = false;
     }
@@ -226,7 +222,7 @@ function validateEditForm() {
   return isValid;
 }
 
-function showMessage(message, type) {
+function showMessage(message, type, duration = 3000) {
   const toastContainer = document.querySelector(".toast-container");
   const toast = document.createElement("div");
 
@@ -243,7 +239,7 @@ function showMessage(message, type) {
 
   setTimeout(function () {
     toast.remove();
-  }, 3000);
+  }, duration);
 }
 
 function renderNotes(notes) {
@@ -304,8 +300,7 @@ function displayClientDetails() {
   clientStatusElement.className = "status-badge";
   clientStatusElement.classList.add(getStatusClass(client.status));
   clientStatusElement.textContent = client.status || "Lead";
-  clientDealValueElement.textContent =
-    `$${(Number(client.dealValue) || 0).toLocaleString()}`;
+  clientDealValueElement.textContent = `$${(Number(client.dealValue) || 0).toLocaleString()}`;
 
   const createdDate = new Date(client.createdAt);
 
@@ -328,15 +323,14 @@ function setClientReminder() {
   const clientName = client.name;
   const reminderTime = new Date(Date.now() + 60000).toLocaleTimeString([], {
     hour: "2-digit",
-    minute: "2-digit"
+    minute: "2-digit",
   });
 
   showMessage("Reminder set ✓", "success");
-  reminderStatus.textContent =
-    `Reminder scheduled for ${reminderTime}. Keep this page open.`;
+  reminderStatus.textContent = `Reminder scheduled for ${reminderTime}. Keep this page open.`;
 
   setTimeout(function () {
-    showMessage(`⏰ Follow up: ${clientName}`, "success");
+    showMessage(`⏰ Follow up: ${clientName}`, "success", 5000);
     reminderStatus.textContent = `Reminder delivered for ${clientName}.`;
   }, 60000);
 }
@@ -433,7 +427,7 @@ addNoteForm.addEventListener("submit", function (event) {
 
   const newNote = {
     text: noteTextInput.value.trim(),
-    date: new Date().toLocaleString()
+    date: new Date().toLocaleString(),
   };
 
   clients[clientIndex].notes.push(newNote);

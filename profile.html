@@ -46,87 +46,112 @@
     </section>
 
     <div class="profile-layout">
-      <!-- Profile Details -->
-      <section
-        id="profile-details"
-        class="card profile-card profile-overview"
-      >
-        <div class="profile-summary">
-          <div
-            id="profile-avatar"
-            class="profile-avatar"
-            aria-hidden="true"
-          ></div>
+      <div class="profile-left-column">
+        <!-- Profile Details -->
+        <section
+          id="profile-details"
+          class="card profile-card profile-overview"
+        >
+          <div class="profile-summary">
+            <div
+              id="profile-avatar"
+              class="profile-avatar"
+              aria-hidden="true"
+            ></div>
 
-          <div class="profile-summary-content">
-            <h2 id="profile-name"></h2>
-            <p id="profile-email" class="text-muted"></p>
-            <p id="profile-company" class="text-muted"></p>
-            <p class="profile-member-since text-muted">
-              Member since <span id="profile-created-at"></span>
-            </p>
+            <div class="profile-summary-content">
+              <h2 id="profile-name"></h2>
+              <p id="profile-email" class="text-muted"></p>
+              <p id="profile-company" class="text-muted"></p>
+              <p class="profile-member-since text-muted">
+                Member since <span id="profile-created-at"></span>
+              </p>
+            </div>
           </div>
-        </div>
 
-        <div class="profile-actions">
+          <div class="profile-actions">
+            <button
+              type="button"
+              id="edit-profile-button"
+              class="btn btn-primary"
+            >
+              Edit Profile
+            </button>
+          </div>
+        </section>
+
+        <!-- Edit Profile Form -->
+        <form
+          id="edit-profile-form"
+          class="card profile-card profile-overview hidden"
+          novalidate
+        >
+          <div class="form-group">
+            <label class="form-label" for="edit-profile-name">
+              Full Name
+            </label>
+            <input
+              class="form-input"
+              type="text"
+              id="edit-profile-name"
+              name="fullName"
+              placeholder="Enter full name"
+              required
+            >
+            <p class="error-message" id="profile-name-error"></p>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="edit-profile-company">
+              Company
+            </label>
+            <input
+              class="form-input"
+              type="text"
+              id="edit-profile-company"
+              name="company"
+              placeholder="Enter company name"
+            >
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" class="btn btn-primary">
+              Save Changes
+            </button>
+
+            <button
+              type="button"
+              id="cancel-profile-edit-button"
+              class="btn btn-secondary"
+            >
+              Cancel
+            </button>
+          </div>
+        </form>
+
+        <!-- CRM Data Management -->
+        <section
+          class="card profile-card profile-section profile-data danger-zone"
+        >
+          <div class="section-header">
+            <div>
+              <h2>CRM Data</h2>
+              <p class="text-muted">
+                Reset the client database and restore the original clients from
+                the API.
+              </p>
+            </div>
+          </div>
+
           <button
             type="button"
-            id="edit-profile-button"
-            class="btn btn-primary"
+            id="reset-crm-data-button"
+            class="btn btn-danger"
           >
-            Edit Profile
+            Reset CRM Data
           </button>
-        </div>
-      </section>
-
-      <!-- Edit Profile Form -->
-      <form
-        id="edit-profile-form"
-        class="card profile-card profile-overview hidden"
-        novalidate
-      >
-        <div class="form-group">
-          <label class="form-label" for="edit-profile-name">
-            Full Name
-          </label>
-          <input
-            class="form-input"
-            type="text"
-            id="edit-profile-name"
-            name="fullName"
-            placeholder="Enter full name"
-            required
-          >
-          <p class="error-message" id="profile-name-error"></p>
-        </div>
-
-        <div class="form-group">
-          <label class="form-label" for="edit-profile-company">
-            Company
-          </label>
-          <input
-            class="form-input"
-            type="text"
-            id="edit-profile-company"
-            name="company"
-            placeholder="Enter company name"
-          >
-        </div>
-
-        <div class="form-actions">
-          <button type="submit" class="btn btn-primary">
-            Save Changes
-          </button>
-
-          <button
-            type="button"
-            id="cancel-profile-edit-button"
-            class="btn btn-secondary"
-          >
-            Cancel
-          </button>
-        </div>
-      </form>
+        </section>
+      </div>
 
       <!-- Change Password Form -->
       <section class="card profile-card profile-section profile-password">
@@ -192,29 +217,6 @@
             Change Password
           </button>
         </form>
-      </section>
-
-      <!-- CRM Data Management -->
-      <section
-        class="card profile-card profile-section profile-data danger-zone"
-      >
-        <div class="section-header">
-          <div>
-            <h2>CRM Data</h2>
-            <p class="text-muted">
-              Reset the client database and restore the original clients from
-              the API.
-            </p>
-          </div>
-        </div>
-
-        <button
-          type="button"
-          id="reset-crm-data-button"
-          class="btn btn-danger"
-        >
-          Reset CRM Data
-        </button>
       </section>
     </div>
   </main>
