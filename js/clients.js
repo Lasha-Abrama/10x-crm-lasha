@@ -2,6 +2,7 @@ const clientsTable = document.querySelector(".clients-table");
 const clientsTableBody = document.querySelector("#clients-table-body");
 const clientsEmptyMessage = document.querySelector("#clients-empty-message");
 const clientSearchInput = document.getElementById("client-search");
+const statusFilter = document.getElementById("status-filter");
 
 function getClients() {
   const savedClients = localStorage.getItem("crm_clients");
@@ -72,25 +73,29 @@ function renderClients(clients) {
   });
 }
 
-function filterClientsBySearch() {
+function applyClientFilters() {
   const searchText = clientSearchInput.value.trim().toLowerCase();
+  const selectedStatus = statusFilter.value;
   const filteredClients = clients.filter(function (client) {
     const fullName = client.fullName.toLowerCase();
     const email = client.email.toLowerCase();
     const company = client.company || "";
-
-    return (
+    const matchesSearch =
       fullName.startsWith(searchText) ||
       email.startsWith(searchText) ||
-      company.toLowerCase().startsWith(searchText)
-    );
+      company.toLowerCase().startsWith(searchText);
+    const matchesStatus =
+      selectedStatus === "all" || client.status === selectedStatus;
+
+    return matchesSearch && matchesStatus;
   });
 
   renderClients(filteredClients);
 }
 
-if (clientSearchInput) {
-  clientSearchInput.addEventListener("input", filterClientsBySearch);
+if (clientSearchInput && statusFilter) {
+  clientSearchInput.addEventListener("input", applyClientFilters);
+  statusFilter.addEventListener("change", applyClientFilters);
 }
 
 renderClients(clients);
