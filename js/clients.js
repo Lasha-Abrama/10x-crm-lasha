@@ -1,6 +1,7 @@
 const clientsTable = document.querySelector(".clients-table");
 const clientsTableBody = document.querySelector("#clients-table-body");
 const clientsEmptyMessage = document.querySelector("#clients-empty-message");
+const clientSearchInput = document.getElementById("client-search");
 
 function getClients() {
   const savedClients = localStorage.getItem("crm_clients");
@@ -11,6 +12,8 @@ function getClients() {
 
   return [];
 }
+
+const clients = getClients();
 
 function renderClients(clients) {
   clientsTableBody.innerHTML = "";
@@ -69,4 +72,25 @@ function renderClients(clients) {
   });
 }
 
-renderClients(getClients());
+function filterClientsBySearch() {
+  const searchText = clientSearchInput.value.trim().toLowerCase();
+  const filteredClients = clients.filter(function (client) {
+    const fullName = client.fullName.toLowerCase();
+    const email = client.email.toLowerCase();
+    const company = client.company || "";
+
+    return (
+      fullName.includes(searchText) ||
+      email.includes(searchText) ||
+      company.toLowerCase().includes(searchText)
+    );
+  });
+
+  renderClients(filteredClients);
+}
+
+if (clientSearchInput) {
+  clientSearchInput.addEventListener("input", filterClientsBySearch);
+}
+
+renderClients(clients);
