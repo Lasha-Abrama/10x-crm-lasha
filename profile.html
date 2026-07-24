@@ -8,12 +8,26 @@
   <script src="js/profile.js" defer></script>
 </head>
 <body>
-  <header class="container page-header">
-    <h1 class="page-title">10X CRM Profile</h1>
-    <button type="button" id="logout-button" class="btn btn-secondary">
-      Log Out
-    </button>
+  <header class="app-header">
+    <nav class="navbar container" aria-label="Main navigation">
+      <a class="navbar-brand" href="dashboard.html">10X CRM</a>
+
+      <div class="navbar-links">
+        <a class="nav-link" href="dashboard.html">Dashboard</a>
+        <a class="nav-link" href="clients.html">Clients</a>
+      </div>
+
+      <div class="navbar-actions">
+        <button type="button" id="logout-button" class="btn btn-secondary">
+          Log Out
+        </button>
+      </div>
+    </nav>
   </header>
+
+  <main class="page-container">
+    <h1 class="page-title">Profile</h1>
+  </main>
 
   <script src="js/guard.js"></script>
   <script src="js/common.js"></script>
