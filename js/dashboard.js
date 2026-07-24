@@ -85,6 +85,18 @@ function displayClientStatistics() {
   }
 }
 
+async function loadClientStatistics() {
+  if (localStorage.getItem("crm_clients") === null) {
+    try {
+      await fetchClientsFromApi();
+    } catch (error) {
+      console.error("Failed to load client statistics:", error);
+    }
+  }
+
+  displayClientStatistics();
+}
+
 displayUserName();
 displayCurrentDate();
-displayClientStatistics();
+loadClientStatistics();

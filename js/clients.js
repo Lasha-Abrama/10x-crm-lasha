@@ -38,6 +38,22 @@ function getClients() {
 
 const clients = getClients();
 
+async function loadClients() {
+  if (localStorage.getItem("crm_clients") === null) {
+    try {
+      const fetchedClients = await fetchClientsFromApi();
+
+      fetchedClients.forEach(function (client) {
+        clients.push(client);
+      });
+    } catch (error) {
+      console.error("Failed to load clients:", error);
+    }
+  }
+
+  applyClientFilters();
+}
+
 function clearAddClientErrors() {
   const formFields = addClientForm.querySelectorAll(
     ".form-input, .form-select"
@@ -328,4 +344,4 @@ addClientForm.addEventListener("submit", function (event) {
   showMessage("Client added successfully!", "success");
 });
 
-applyClientFilters();
+loadClients();

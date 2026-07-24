@@ -24,6 +24,7 @@ const newPasswordError = document.querySelector("#new-password-error");
 const confirmNewPasswordError = document.querySelector(
   "#confirm-new-password-error"
 );
+const resetCrmDataButton = document.querySelector("#reset-crm-data-button");
 
 function getCurrentSession() {
   const savedSession = localStorage.getItem("crm_session");
@@ -164,6 +165,31 @@ function clearPasswordErrors() {
 function showPasswordError(input, errorElement, message) {
   input.classList.add("input-error");
   errorElement.textContent = message;
+}
+
+async function resetCrmData() {
+  const shouldReset = confirm(
+    "Are you sure you want to reset all CRM client data?"
+  );
+
+  if (!shouldReset) {
+    return;
+  }
+
+  resetCrmDataButton.disabled = true;
+  resetCrmDataButton.textContent = "Resetting...";
+
+  try {
+    localStorage.removeItem("crm_clients");
+    await fetchClientsFromApi();
+    showMessage("CRM data reset successfully!", "success");
+  } catch (error) {
+    showMessage("Failed to reset CRM data", "error");
+    console.error("Failed to reset CRM data:", error);
+  } finally {
+    resetCrmDataButton.disabled = false;
+    resetCrmDataButton.textContent = "Reset CRM Data";
+  }
 }
 
 editProfileButton.addEventListener("click", function () {
@@ -327,5 +353,7 @@ changePasswordForm.addEventListener("submit", function (event) {
   clearPasswordErrors();
   showMessage("Password changed ✓", "success");
 });
+
+resetCrmDataButton.addEventListener("click", resetCrmData);
 
 displayProfile();
