@@ -1,9 +1,15 @@
 const clientDetailsContent = document.querySelector("#client-details-content");
 const clientNotFoundMessage = document.querySelector("#client-not-found");
+const clientAvatarElement = document.querySelector("#client-avatar");
+const clientAvatarFallback = document.querySelector(
+  "#client-avatar-fallback"
+);
 const clientNameElement = document.querySelector("#client-name");
 const clientEmailElement = document.querySelector("#client-email");
+const clientPhoneElement = document.querySelector("#client-phone");
 const clientCompanyElement = document.querySelector("#client-company");
 const clientStatusElement = document.querySelector("#client-status");
+const clientDealValueElement = document.querySelector("#client-deal-value");
 const clientCreatedElement = document.querySelector("#client-created");
 const editClientButton = document.querySelector("#edit-client-button");
 const reminderButton = document.querySelector("#reminder-button");
@@ -39,8 +45,51 @@ function getClientById() {
   const clients = getClients();
 
   return clients.find(function (client) {
-    return client.id === clientId;
+    return Number(client.id) === clientId;
   });
+}
+
+function getClientInitials(name) {
+  const nameParts = (name || "").trim().split(" ").filter(function (part) {
+    return part !== "";
+  });
+  const initials = nameParts.slice(0, 2).map(function (part) {
+    return part.charAt(0);
+  }).join("");
+
+  return initials.toUpperCase() || "?";
+}
+
+function getStatusClass(status) {
+  if (status === "Contacted") {
+    return "status-contacted";
+  }
+
+  if (status === "Won") {
+    return "status-won";
+  }
+
+  if (status === "Lost") {
+    return "status-lost";
+  }
+
+  return "status-lead";
+}
+
+function displayClientAvatar(client) {
+  clientAvatarFallback.textContent = getClientInitials(client.name);
+
+  if (client.image) {
+    clientAvatarElement.src = client.image;
+    clientAvatarElement.alt = `${client.name || "Client"} avatar`;
+    clientAvatarElement.classList.remove("hidden");
+    clientAvatarFallback.classList.add("hidden");
+  } else {
+    clientAvatarElement.removeAttribute("src");
+    clientAvatarElement.alt = "";
+    clientAvatarElement.classList.add("hidden");
+    clientAvatarFallback.classList.remove("hidden");
+  }
 }
 
 function populateEditForm(client) {
@@ -205,7 +254,14 @@ function renderNotes(notes) {
     noteDate.classList.add("note-date", "text-muted");
 
     noteText.textContent = note.text;
-    noteDate.textContent = new Date(note.createdAt).toLocaleString();
+
+    if (note.date) {
+      noteDate.textContent = note.date;
+    } else if (note.createdAt) {
+      noteDate.textContent = new Date(note.createdAt).toLocaleString();
+    } else {
+      noteDate.textContent = "Date unavailable";
+    }
 
     noteCard.appendChild(noteText);
     noteCard.appendChild(noteDate);
@@ -226,13 +282,22 @@ function displayClientDetails() {
   clientDetailsContent.classList.remove("hidden");
   editClientForm.classList.add("hidden");
   clientNotFoundMessage.classList.remove("visible");
-  clientNameElement.textContent = client.name;
-  clientEmailElement.textContent = client.email;
+  displayClientAvatar(client);
+  clientNameElement.textContent = client.name || "Unnamed Client";
+  clientEmailElement.textContent = client.email || "—";
+  clientPhoneElement.textContent = client.phone || "—";
   clientCompanyElement.textContent = client.company || "—";
-  clientStatusElement.textContent = client.status;
-  clientCreatedElement.textContent = new Date(
-    client.createdAt
-  ).toLocaleDateString();
+  clientStatusElement.className = "status-badge";
+  clientStatusElement.classList.add(getStatusClass(client.status));
+  clientStatusElement.textContent = client.status || "Lead";
+  clientDealValueElement.textContent =
+    `$${(Number(client.dealValue) || 0).toLocaleString()}`;
+
+  const createdDate = new Date(client.createdAt);
+
+  clientCreatedElement.textContent = Number.isNaN(createdDate.getTime())
+    ? "—"
+    : createdDate.toLocaleDateString();
 
   const notes = Array.isArray(client.notes) ? client.notes : [];
   renderNotes(notes);
@@ -345,9 +410,8 @@ addNoteForm.addEventListener("submit", function (event) {
   }
 
   const newNote = {
-    id: Date.now(),
     text: noteTextInput.value.trim(),
-    createdAt: new Date().toISOString()
+    date: new Date().toLocaleString()
   };
 
   clients[clientIndex].notes.push(newNote);
@@ -371,7 +435,7 @@ editClientForm.addEventListener("submit", function (event) {
   const clients = getClients();
   const clientId = Number(getClientIdFromUrl());
   const clientIndex = clients.findIndex(function (client) {
-    return client.id === clientId;
+    return Number(client.id) === clientId;
   });
 
   if (clientIndex === -1) {
@@ -395,3 +459,8 @@ editClientForm.addEventListener("submit", function (event) {
 });
 
 displayClientDetails();
+
+clientAvatarElement.addEventListener("error", function () {
+  clientAvatarElement.classList.add("hidden");
+  clientAvatarFallback.classList.remove("hidden");
+});

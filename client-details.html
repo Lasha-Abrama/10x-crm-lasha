@@ -40,32 +40,54 @@
 
     <!-- Client Details -->
     <section id="client-details-content">
-      <dl class="card client-details-card">
-        <div class="form-group">
-          <dt class="form-label">Name</dt>
-          <dd id="client-name"></dd>
+      <section class="card client-details-card">
+        <div class="client-details-identity">
+          <img
+            id="client-avatar"
+            class="client-details-avatar hidden"
+            alt=""
+          >
+          <div
+            id="client-avatar-fallback"
+            class="client-details-avatar"
+            aria-hidden="true"
+          ></div>
+
+          <div class="client-details-heading">
+            <h2 id="client-name"></h2>
+            <p id="client-company" class="text-muted"></p>
+          </div>
         </div>
 
-        <div class="form-group">
-          <dt class="form-label">Email</dt>
-          <dd id="client-email"></dd>
-        </div>
+        <dl class="client-details-grid">
+          <div class="client-detail-item">
+            <dt class="form-label">Email</dt>
+            <dd id="client-email"></dd>
+          </div>
 
-        <div class="form-group">
-          <dt class="form-label">Company</dt>
-          <dd id="client-company"></dd>
-        </div>
+          <div class="client-detail-item">
+            <dt class="form-label">Phone</dt>
+            <dd id="client-phone"></dd>
+          </div>
 
-        <div class="form-group">
-          <dt class="form-label">Status</dt>
-          <dd id="client-status"></dd>
-        </div>
+          <div class="client-detail-item">
+            <dt class="form-label">Status</dt>
+            <dd>
+              <span id="client-status" class="status-badge"></span>
+            </dd>
+          </div>
 
-        <div class="form-group">
-          <dt class="form-label">Created At</dt>
-          <dd id="client-created"></dd>
-        </div>
-      </dl>
+          <div class="client-detail-item">
+            <dt class="form-label">Deal Value</dt>
+            <dd id="client-deal-value" class="client-deal-value"></dd>
+          </div>
+
+          <div class="client-detail-item">
+            <dt class="form-label">Client Since</dt>
+            <dd id="client-created"></dd>
+          </div>
+        </dl>
+      </section>
 
       <div class="client-details-actions">
         <button

@@ -296,6 +296,10 @@ body {
   gap: 1rem;
 }
 
+.clients-list.hidden {
+  display: none;
+}
+
 .client-card {
   display: grid;
   grid-template-columns: auto minmax(0, 1fr) minmax(140px, auto) auto;
@@ -413,6 +417,58 @@ body {
 
 .client-details-card {
   margin-top: 2rem;
+}
+
+.client-details-identity {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding-bottom: 1.5rem;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.client-details-avatar {
+  display: flex;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  width: 4.5rem;
+  height: 4.5rem;
+  color: var(--color-accent);
+  font-size: 1.25rem;
+  font-weight: 700;
+  object-fit: cover;
+  background-color: var(--color-background);
+  border: 1px solid var(--color-border);
+  border-radius: 50%;
+}
+
+.client-details-avatar.hidden {
+  display: none;
+}
+
+.client-details-heading {
+  min-width: 0;
+}
+
+.client-details-heading h2,
+.client-details-heading p {
+  overflow-wrap: anywhere;
+}
+
+.client-details-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1.25rem;
+  margin-top: 1.5rem;
+}
+
+.client-detail-item {
+  min-width: 0;
+}
+
+.client-detail-item dd {
+  overflow-wrap: anywhere;
 }
 
 .client-details-actions {
@@ -814,6 +870,14 @@ body {
   .client-details-actions,
   .form-actions {
     flex-direction: column;
+  }
+
+  .client-details-identity {
+    align-items: flex-start;
+  }
+
+  .client-details-grid {
+    grid-template-columns: 1fr;
   }
 
   .modal-content {
