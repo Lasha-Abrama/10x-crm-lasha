@@ -205,6 +205,22 @@ body {
   margin-left: auto;
 }
 
+.dashboard-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 2rem;
+}
+
+.dashboard-header .page-title {
+  margin-bottom: 0.5rem;
+}
+
+.dashboard-date {
+  font-weight: 600;
+  white-space: nowrap;
+}
+
 .auth-layout {
   display: flex;
   align-items: center;
@@ -294,6 +310,11 @@ body {
 
   .navbar-actions .btn {
     width: auto;
+  }
+
+  .dashboard-header {
+    flex-direction: column;
+    gap: 1rem;
   }
 
   .toast-container {
