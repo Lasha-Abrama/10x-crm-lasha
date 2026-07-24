@@ -8,6 +8,85 @@
   <script src="js/signup.js" defer></script>
 </head>
 <body>
-  <h1>10X CRM Sign Up</h1>
+  <main class="container auth-layout">
+    <!-- Sign Up Card -->
+    <section class="card auth-card">
+      <h1 class="page-title">Create your account</h1>
+
+      <!-- Sign Up Form -->
+      <form>
+        <div class="form-group">
+          <label class="form-label" for="full-name">Full Name</label>
+          <input
+            class="form-input"
+            type="text"
+            id="full-name"
+            name="fullName"
+            placeholder="Enter your full name"
+            required
+          >
+          <p class="error-message"></p>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="email">Email</label>
+          <input
+            class="form-input"
+            type="email"
+            id="email"
+            name="email"
+            placeholder="Enter your email"
+            required
+          >
+          <p class="error-message"></p>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="company">Company (optional)</label>
+          <input
+            class="form-input"
+            type="text"
+            id="company"
+            name="company"
+            placeholder="Enter your company"
+          >
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="password">Password</label>
+          <input
+            class="form-input"
+            type="password"
+            id="password"
+            name="password"
+            placeholder="Create a password"
+            required
+          >
+          <p class="error-message"></p>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="confirm-password">Confirm Password</label>
+          <input
+            class="form-input"
+            type="password"
+            id="confirm-password"
+            name="confirmPassword"
+            placeholder="Confirm your password"
+            required
+          >
+          <p class="error-message"></p>
+        </div>
+
+        <button class="btn btn-primary" type="button">Create Account</button>
+      </form>
+
+      <!-- Login Link -->
+      <p class="auth-footer text-muted">
+        Already have an account?
+        <a class="auth-link" href="index.html">Log in</a>
+      </p>
+    </section>
+  </main>
 </body>
 </html>

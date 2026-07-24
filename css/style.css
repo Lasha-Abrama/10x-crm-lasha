@@ -122,6 +122,39 @@ body {
   color: var(--color-error);
 }
 
+.auth-layout {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+}
+
+.auth-card {
+  width: 100%;
+  max-width: 420px;
+}
+
+.auth-card .page-title {
+  text-align: center;
+}
+
+.auth-card .btn {
+  width: 100%;
+}
+
+.auth-footer {
+  margin-top: 1.25rem;
+  text-align: center;
+}
+
+.auth-link {
+  color: var(--color-accent);
+}
+
+.auth-link:hover {
+  color: var(--color-accent-hover);
+}
+
 .toast-container {
   position: fixed;
   top: 1rem;
