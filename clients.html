@@ -52,42 +52,65 @@
         >
       </div>
 
-      <div class="control-group">
-        <label class="form-label" for="status-filter">Status</label>
-        <select class="form-select" id="status-filter" name="statusFilter">
-          <option value="all">All</option>
-          <option value="Lead">Lead</option>
-          <option value="Contacted">Contacted</option>
-          <option value="Won">Won</option>
-          <option value="Lost">Lost</option>
-        </select>
-      </div>
+      <fieldset class="control-group status-filter-group">
+        <legend class="form-label">Status</legend>
+
+        <div id="status-filters" class="status-filters">
+          <button
+            type="button"
+            class="status-filter-button active"
+            data-status="all"
+            aria-pressed="true"
+          >
+            All
+          </button>
+          <button
+            type="button"
+            class="status-filter-button"
+            data-status="Lead"
+            aria-pressed="false"
+          >
+            Lead
+          </button>
+          <button
+            type="button"
+            class="status-filter-button"
+            data-status="Contacted"
+            aria-pressed="false"
+          >
+            Contacted
+          </button>
+          <button
+            type="button"
+            class="status-filter-button"
+            data-status="Won"
+            aria-pressed="false"
+          >
+            Won
+          </button>
+          <button
+            type="button"
+            class="status-filter-button"
+            data-status="Lost"
+            aria-pressed="false"
+          >
+            Lost
+          </button>
+        </div>
+      </fieldset>
 
       <div class="control-group">
         <label class="form-label" for="sort-clients">Sort By</label>
         <select class="form-select" id="sort-clients" name="sortClients">
           <option value="newest">Newest First</option>
-          <option value="oldest">Oldest First</option>
           <option value="name-asc">Name A–Z</option>
-          <option value="name-desc">Name Z–A</option>
+          <option value="deal-desc">Deal Value: High–Low</option>
         </select>
       </div>
     </section>
 
-    <section class="card table-container">
-      <table class="clients-table">
-        <thead>
-          <tr>
-            <th scope="col">Name</th>
-            <th scope="col">Email</th>
-            <th scope="col">Company</th>
-            <th scope="col">Status</th>
-            <th scope="col">Created</th>
-            <th scope="col">Actions</th>
-          </tr>
-        </thead>
-        <tbody id="clients-table-body"></tbody>
-      </table>
+    <section class="clients-list-section" aria-label="Client list">
+      <div id="clients-list" class="clients-list"></div>
 
       <p id="clients-empty-message" class="empty-message">
         No clients found.

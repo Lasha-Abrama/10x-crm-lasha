@@ -1,9 +1,10 @@
-const clientsTable = document.querySelector(".clients-table");
-const clientsTableBody = document.querySelector("#clients-table-body");
+const clientsList = document.querySelector("#clients-list");
 const clientsEmptyMessage = document.querySelector("#clients-empty-message");
 const clientsLoadState = document.querySelector("#clients-load-state");
 const clientSearchInput = document.getElementById("client-search");
-const statusFilter = document.getElementById("status-filter");
+const statusFilterButtons = document.querySelectorAll(
+  ".status-filter-button"
+);
 const sortClientsSelect = document.getElementById("sort-clients");
 const addClientButton = document.getElementById("add-client-button");
 const addClientModal = document.getElementById("add-client-modal");
@@ -30,11 +31,12 @@ const newClientDealValueError = document.getElementById(
 const validClientStatuses = ["Lead", "Contacted", "Won", "Lost"];
 const clients = [];
 let clientsReady = false;
+let selectedStatus = "all";
 
 function showClientsLoading() {
   clientsReady = false;
-  clientsTableBody.textContent = "";
-  clientsTable.classList.add("hidden");
+  clientsList.textContent = "";
+  clientsList.classList.add("hidden");
   clientsEmptyMessage.classList.remove("visible");
   clientsLoadState.textContent = "";
   clientsLoadState.classList.remove("hidden");
@@ -48,8 +50,8 @@ function showClientsLoading() {
 function showClientsError() {
   clientsReady = false;
   clients.length = 0;
-  clientsTableBody.textContent = "";
-  clientsTable.classList.add("hidden");
+  clientsList.textContent = "";
+  clientsList.classList.add("hidden");
   clientsEmptyMessage.classList.remove("visible");
   clientsLoadState.textContent = "";
   clientsLoadState.classList.remove("hidden");
@@ -215,90 +217,166 @@ function showMessage(message, type) {
   }, 3000);
 }
 
-function renderClients(clients) {
-  clientsTableBody.innerHTML = "";
+function getClientInitials(name) {
+  const nameParts = (name || "").trim().split(" ").filter(function (part) {
+    return part !== "";
+  });
+  const initials = nameParts.slice(0, 2).map(function (part) {
+    return part.charAt(0);
+  }).join("");
 
-  if (clients.length === 0) {
-    clientsTable.classList.add("hidden");
+  return initials.toUpperCase() || "?";
+}
+
+function openClientDetails(clientId) {
+  window.location.href = `client-details.html?id=${clientId}`;
+}
+
+function updateClientStatus(clientId, status) {
+  if (!validClientStatuses.includes(status)) {
+    return;
+  }
+
+  const client = clients.find(function (savedClient) {
+    return Number(savedClient.id) === Number(clientId);
+  });
+
+  if (!client) {
+    showMessage("Client not found.", "error");
+    return;
+  }
+
+  client.status = status;
+  localStorage.setItem("crm_clients", JSON.stringify(clients));
+  applyClientFilters();
+}
+
+function renderClients(visibleClients) {
+  clientsList.textContent = "";
+
+  if (visibleClients.length === 0) {
+    clientsList.classList.add("hidden");
     clientsEmptyMessage.classList.add("visible");
     return;
   }
 
-  clientsTable.classList.remove("hidden");
+  clientsList.classList.remove("hidden");
   clientsEmptyMessage.classList.remove("visible");
 
-  clients.forEach(function (client) {
-    const row = document.createElement("tr");
-    const nameCell = document.createElement("td");
-    const emailCell = document.createElement("td");
-    const companyCell = document.createElement("td");
-    const statusCell = document.createElement("td");
-    const createdCell = document.createElement("td");
-    const actionsCell = document.createElement("td");
+  visibleClients.forEach(function (client) {
+    const clientCard = document.createElement("article");
+    const avatar = client.image
+      ? document.createElement("img")
+      : document.createElement("div");
+    const clientInformation = document.createElement("div");
+    const clientName = document.createElement("h2");
+    const clientCompany = document.createElement("p");
+    const clientEmail = document.createElement("p");
+    const dealValue = document.createElement("p");
+    const statusWrapper = document.createElement("div");
+    const statusLabel = document.createElement("label");
+    const statusSelect = document.createElement("select");
     const actionsWrapper = document.createElement("div");
-    const statusBadge = document.createElement("span");
     const viewButton = document.createElement("button");
     const deleteButton = document.createElement("button");
+    const numericDealValue = Number(client.dealValue) || 0;
 
-    nameCell.textContent = client.name;
-    emailCell.textContent = client.email;
-    companyCell.textContent = client.company || "—";
-    createdCell.textContent = new Date(client.createdAt).toLocaleDateString();
+    clientCard.classList.add("card", "client-card");
+    clientCard.dataset.clientId = client.id;
 
-    statusBadge.classList.add("status-badge");
-    statusBadge.textContent = client.status;
+    avatar.classList.add("client-avatar");
 
-    if (client.status === "Lead") {
-      statusBadge.classList.add("status-lead");
-    } else if (client.status === "Contacted") {
-      statusBadge.classList.add("status-contacted");
-    } else if (client.status === "Won") {
-      statusBadge.classList.add("status-won");
-    } else if (client.status === "Lost") {
-      statusBadge.classList.add("status-lost");
+    if (client.image) {
+      avatar.src = client.image;
+      avatar.alt = `${client.name || "Client"} avatar`;
+      avatar.loading = "lazy";
+    } else {
+      avatar.textContent = getClientInitials(client.name);
     }
 
-    statusCell.appendChild(statusBadge);
+    clientInformation.classList.add("client-card-information");
+    clientName.classList.add("client-card-name");
+    clientCompany.classList.add("client-card-company", "text-muted");
+    clientEmail.classList.add("client-card-email", "text-muted");
+    dealValue.classList.add("client-deal-value");
+    clientName.textContent = client.name || "Unnamed Client";
+    clientCompany.textContent = client.company || "—";
+    clientEmail.textContent = client.email || "—";
+    dealValue.textContent = `$${numericDealValue.toLocaleString()}`;
+
+    clientInformation.appendChild(clientName);
+    clientInformation.appendChild(clientCompany);
+    clientInformation.appendChild(clientEmail);
+    clientInformation.appendChild(dealValue);
+
+    statusWrapper.classList.add("client-status-control");
+    statusLabel.classList.add("form-label");
+    statusLabel.textContent = "Status";
+    statusLabel.htmlFor = `client-status-${client.id}`;
+
+    statusSelect.classList.add("form-select");
+    statusSelect.id = `client-status-${client.id}`;
+    statusSelect.setAttribute(
+      "aria-label",
+      `Status for ${client.name || "client"}`
+    );
+
+    validClientStatuses.forEach(function (status) {
+      const statusOption = document.createElement("option");
+
+      statusOption.value = status;
+      statusOption.textContent = status;
+      statusOption.selected = client.status === status;
+      statusSelect.appendChild(statusOption);
+    });
+
+    statusWrapper.appendChild(statusLabel);
+    statusWrapper.appendChild(statusSelect);
 
     viewButton.type = "button";
-    viewButton.classList.add("btn", "btn-secondary", "view-client-button");
+    viewButton.classList.add("btn", "btn-secondary");
     viewButton.textContent = "View";
-    viewButton.dataset.clientId = client.id;
 
     deleteButton.type = "button";
     deleteButton.classList.add("btn", "btn-danger", "delete-client-button");
     deleteButton.textContent = "Delete";
     deleteButton.dataset.clientId = client.id;
 
-    actionsWrapper.classList.add("table-actions");
+    actionsWrapper.classList.add("client-card-actions");
     actionsWrapper.appendChild(viewButton);
     actionsWrapper.appendChild(deleteButton);
-    actionsCell.appendChild(actionsWrapper);
 
-    row.appendChild(nameCell);
-    row.appendChild(emailCell);
-    row.appendChild(companyCell);
-    row.appendChild(statusCell);
-    row.appendChild(createdCell);
-    row.appendChild(actionsCell);
-    clientsTableBody.appendChild(row);
-  });
+    clientCard.appendChild(avatar);
+    clientCard.appendChild(clientInformation);
+    clientCard.appendChild(statusWrapper);
+    clientCard.appendChild(actionsWrapper);
+    clientsList.appendChild(clientCard);
 
-  const viewButtons = document.querySelectorAll(".view-client-button");
-
-  viewButtons.forEach(function (viewButton) {
-    viewButton.addEventListener("click", function () {
-      const clientId = viewButton.dataset.clientId;
-
-      window.location.href = `client-details.html?id=${clientId}`;
+    clientCard.addEventListener("click", function () {
+      openClientDetails(client.id);
     });
-  });
 
-  const deleteButtons = document.querySelectorAll(".delete-client-button");
+    viewButton.addEventListener("click", function (event) {
+      event.stopPropagation();
+      openClientDetails(client.id);
+    });
 
-  deleteButtons.forEach(function (deleteButton) {
-    deleteButton.addEventListener("click", function () {
-      deleteClientFromList(deleteButton.dataset.clientId);
+    statusSelect.addEventListener("click", function (event) {
+      event.stopPropagation();
+    });
+
+    statusSelect.addEventListener("keydown", function (event) {
+      event.stopPropagation();
+    });
+
+    statusSelect.addEventListener("change", function (event) {
+      event.stopPropagation();
+      updateClientStatus(client.id, statusSelect.value);
+    });
+
+    deleteButton.addEventListener("click", function (event) {
+      event.stopPropagation();
+      deleteClientFromList(client.id);
     });
   });
 }
@@ -341,22 +419,17 @@ async function deleteClientFromList(clientId) {
   }
 }
 
-function applyClientFilters() {
-  if (!clientsReady) {
-    return;
-  }
-
+function getVisibleClients() {
   const searchText = clientSearchInput.value.trim().toLowerCase();
-  const selectedStatus = statusFilter.value;
   const selectedSort = sortClientsSelect.value;
   const filteredClients = clients.filter(function (client) {
     const name = (client.name || "").toLowerCase();
     const email = (client.email || "").toLowerCase();
     const company = (client.company || "").toLowerCase();
     const matchesSearch =
-      name.startsWith(searchText) ||
-      email.startsWith(searchText) ||
-      company.startsWith(searchText);
+      name.includes(searchText) ||
+      email.includes(searchText) ||
+      company.includes(searchText);
     const matchesStatus =
       selectedStatus === "all" || client.status === selectedStatus;
 
@@ -372,13 +445,6 @@ function applyClientFilters() {
 
       return secondDate - firstDate;
     });
-  } else if (selectedSort === "oldest") {
-    sortedClients.sort(function (firstClient, secondClient) {
-      const firstDate = new Date(firstClient.createdAt).getTime() || 0;
-      const secondDate = new Date(secondClient.createdAt).getTime() || 0;
-
-      return firstDate - secondDate;
-    });
   } else if (selectedSort === "name-asc") {
     sortedClients.sort(function (firstClient, secondClient) {
       const firstName = firstClient.name || "";
@@ -386,23 +452,45 @@ function applyClientFilters() {
 
       return firstName.localeCompare(secondName);
     });
-  } else if (selectedSort === "name-desc") {
+  } else if (selectedSort === "deal-desc") {
     sortedClients.sort(function (firstClient, secondClient) {
-      const firstName = firstClient.name || "";
-      const secondName = secondClient.name || "";
+      const firstDealValue = Number(firstClient.dealValue) || 0;
+      const secondDealValue = Number(secondClient.dealValue) || 0;
 
-      return secondName.localeCompare(firstName);
+      return secondDealValue - firstDealValue;
     });
   }
 
-  renderClients(sortedClients);
+  return sortedClients;
 }
 
-if (clientSearchInput && statusFilter && sortClientsSelect) {
+function applyClientFilters() {
+  if (!clientsReady) {
+    return;
+  }
+
+  renderClients(getVisibleClients());
+}
+
+if (clientSearchInput && sortClientsSelect) {
   clientSearchInput.addEventListener("input", applyClientFilters);
-  statusFilter.addEventListener("change", applyClientFilters);
   sortClientsSelect.addEventListener("change", applyClientFilters);
 }
+
+statusFilterButtons.forEach(function (filterButton) {
+  filterButton.addEventListener("click", function () {
+    selectedStatus = filterButton.dataset.status;
+
+    statusFilterButtons.forEach(function (button) {
+      const isActive = button === filterButton;
+
+      button.classList.toggle("active", isActive);
+      button.setAttribute("aria-pressed", String(isActive));
+    });
+
+    applyClientFilters();
+  });
+});
 
 addClientButton.addEventListener("click", openAddClientModal);
 closeClientModalButton.addEventListener("click", closeAddClientModal);
