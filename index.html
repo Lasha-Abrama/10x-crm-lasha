@@ -8,48 +8,76 @@
   <script src="js/guard.js"></script>
   <script src="js/login.js" defer></script>
 </head>
-<body>
+<body class="auth-page">
   <main class="container auth-layout">
-    <!-- Login Card -->
-    <section class="card auth-card">
-      <h1 class="page-title">Welcome back</h1>
+    <!-- Product Introduction -->
+    <section class="auth-showcase">
+      <a class="auth-brand" href="index.html">
+        <span class="auth-brand-mark">10X</span>
+        <span>10X CRM</span>
+      </a>
 
-      <!-- Login Form -->
-      <form>
-        <div class="form-group">
-          <label class="form-label" for="email">Email</label>
-          <input
-            class="form-input"
-            type="email"
-            id="email"
-            name="email"
-            placeholder="Enter your email"
-            required
-          >
-          <p class="error-message"></p>
-        </div>
+      <div class="auth-showcase-content">
+        <p class="auth-eyebrow">Your growth command center</p>
+        <h2 class="auth-showcase-title">Relationships that move business forward.</h2>
+        <p class="auth-showcase-text">
+          Keep every client, deal, and follow-up organized in one focused
+          workspace.
+        </p>
 
-        <div class="form-group">
-          <label class="form-label" for="password">Password</label>
-          <input
-            class="form-input"
-            type="password"
-            id="password"
-            name="password"
-            placeholder="Enter your password"
-            required
-          >
-          <p class="error-message"></p>
-        </div>
+        <ul class="auth-benefits">
+          <li>See your full sales pipeline at a glance</li>
+          <li>Keep client conversations and notes together</li>
+          <li>Turn follow-ups into lasting relationships</li>
+        </ul>
+      </div>
 
-        <button class="btn btn-primary" type="submit">Log In</button>
-      </form>
+      <p class="auth-showcase-footer">Simple tools. Clear decisions. Better growth.</p>
+    </section>
 
-      <!-- Sign Up Link -->
-      <p class="auth-footer text-muted">
-        Don't have an account?
-        <a class="auth-link" href="signup.html">Sign up</a>
-      </p>
+    <!-- Login Form -->
+    <section class="auth-form-panel">
+      <div class="card auth-card">
+        <h1 class="page-title">Welcome back</h1>
+        <p class="auth-intro text-muted">
+          Sign in to continue to your CRM workspace.
+        </p>
+
+        <form>
+          <div class="form-group">
+            <label class="form-label" for="email">Email</label>
+            <input
+              class="form-input"
+              type="email"
+              id="email"
+              name="email"
+              placeholder="Enter your email"
+              required
+            >
+            <p class="error-message"></p>
+          </div>
+
+          <div class="form-group">
+            <label class="form-label" for="password">Password</label>
+            <input
+              class="form-input"
+              type="password"
+              id="password"
+              name="password"
+              placeholder="Enter your password"
+              required
+            >
+            <p class="error-message"></p>
+          </div>
+
+          <button class="btn btn-primary" type="submit">Log In</button>
+        </form>
+
+        <p class="auth-footer text-muted">
+          Don't have an account?
+          <a class="auth-link" href="signup.html">Sign up</a>
+        </p>
+      </div>
     </section>
   </main>
 
