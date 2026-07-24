@@ -11,6 +11,19 @@ const profileEmailError = document.querySelector("#profile-email-error");
 const cancelProfileEditButton = document.querySelector(
   "#cancel-profile-edit-button"
 );
+const changePasswordForm = document.querySelector("#change-password-form");
+const currentPasswordInput = document.querySelector("#current-password");
+const newPasswordInput = document.querySelector("#new-password");
+const confirmNewPasswordInput = document.querySelector(
+  "#confirm-new-password"
+);
+const currentPasswordError = document.querySelector(
+  "#current-password-error"
+);
+const newPasswordError = document.querySelector("#new-password-error");
+const confirmNewPasswordError = document.querySelector(
+  "#confirm-new-password-error"
+);
 
 function getCurrentSession() {
   const savedSession = localStorage.getItem("crm_session");
@@ -139,6 +152,20 @@ function showMessage(message, type) {
   }, 3000);
 }
 
+function clearPasswordErrors() {
+  currentPasswordError.textContent = "";
+  newPasswordError.textContent = "";
+  confirmNewPasswordError.textContent = "";
+  currentPasswordInput.classList.remove("input-error");
+  newPasswordInput.classList.remove("input-error");
+  confirmNewPasswordInput.classList.remove("input-error");
+}
+
+function showPasswordError(input, errorElement, message) {
+  input.classList.add("input-error");
+  errorElement.textContent = message;
+}
+
 editProfileButton.addEventListener("click", function () {
   const currentUser = getCurrentUser();
 
@@ -217,6 +244,88 @@ editProfileForm.addEventListener("submit", function (event) {
   profileDetails.classList.remove("hidden");
   clearProfileErrors();
   showMessage("Profile updated successfully!", "success");
+});
+
+changePasswordForm.addEventListener("submit", function (event) {
+  event.preventDefault();
+  clearPasswordErrors();
+
+  const currentUser = getCurrentUser();
+
+  if (!currentUser) {
+    localStorage.removeItem("crm_session");
+    window.location.href = "index.html";
+    return;
+  }
+
+  let isValid = true;
+  const currentPassword = currentPasswordInput.value;
+  const newPassword = newPasswordInput.value;
+  const confirmNewPassword = confirmNewPasswordInput.value;
+  const containsLetter = /[a-zA-Z]/.test(newPassword);
+  const containsNumber = /[0-9]/.test(newPassword);
+
+  if (currentPassword !== currentUser.password) {
+    showPasswordError(
+      currentPasswordInput,
+      currentPasswordError,
+      "Current password is incorrect"
+    );
+    isValid = false;
+  }
+
+  if (
+    newPassword.length < 8 ||
+    !containsLetter ||
+    !containsNumber
+  ) {
+    showPasswordError(
+      newPasswordInput,
+      newPasswordError,
+      "Password must be at least 8 characters and contain a letter and a number"
+    );
+    isValid = false;
+  } else if (newPassword === currentUser.password) {
+    showPasswordError(
+      newPasswordInput,
+      newPasswordError,
+      "New password must be different from the current one"
+    );
+    isValid = false;
+  }
+
+  if (confirmNewPassword !== newPassword) {
+    showPasswordError(
+      confirmNewPasswordInput,
+      confirmNewPasswordError,
+      "Passwords do not match"
+    );
+    isValid = false;
+  }
+
+  if (!isValid) {
+    return;
+  }
+
+  const session = getCurrentSession();
+  const users = getUsers();
+  const currentUserIndex = users.findIndex(function (user) {
+    return Number(user.id) === Number(session.userId);
+  });
+
+  if (currentUserIndex === -1) {
+    localStorage.removeItem("crm_session");
+    window.location.href = "index.html";
+    return;
+  }
+
+  // Real applications must store hashed passwords securely on a server.
+  users[currentUserIndex].password = newPassword;
+  localStorage.setItem("crm_users", JSON.stringify(users));
+
+  changePasswordForm.reset();
+  clearPasswordErrors();
+  showMessage("Password changed ✓", "success");
 });
 
 displayProfile();
