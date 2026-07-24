@@ -19,6 +19,26 @@ function getUsers() {
   return [];
 }
 
+function showMessage(message, type) {
+  const toastContainer = document.querySelector(".toast-container");
+  const toast = document.createElement("div");
+
+  toast.classList.add("toast");
+
+  if (type === "success") {
+    toast.classList.add("toast-success");
+  } else {
+    toast.classList.add("toast-error");
+  }
+
+  toast.textContent = message;
+  toastContainer.appendChild(toast);
+
+  setTimeout(function () {
+    toast.remove();
+  }, 3000);
+}
+
 function clearErrors() {
   emailErrorElement.textContent = "";
   passwordErrorElement.textContent = "";
@@ -93,5 +113,9 @@ loginForm.addEventListener("submit", function (event) {
   };
 
   localStorage.setItem("crm_session", JSON.stringify(session));
-  console.log("Session created successfully");
+  showMessage("Login successful!", "success");
+
+  setTimeout(() => {
+    window.location.href = "dashboard.html";
+  }, 1500);
 });
