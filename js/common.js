@@ -1,6 +1,7 @@
 const logoutButton = document.getElementById("logout-button");
 const themeToggleButton = document.getElementById("theme-toggle");
 const brandMark = document.querySelector(".brand-mark");
+const tenXModeStorageKey = "crm_ten_x_mode";
 
 function getSavedTheme() {
   const savedTheme = localStorage.getItem("crm_theme");
@@ -40,10 +41,7 @@ function logout() {
   window.location.href = "index.html";
 }
 
-let tenXSequence = "";
-let tenXModeTimeout;
-
-function showTenXMessage() {
+function showTenXMessage(message) {
   const toastContainer = document.querySelector(".toast-container");
 
   if (!toastContainer) {
@@ -53,7 +51,7 @@ function showTenXMessage() {
   const toast = document.createElement("div");
 
   toast.classList.add("toast", "toast-ten-x");
-  toast.textContent = "10X MODE UNLOCKED — Momentum activated 🚀";
+  toast.textContent = message;
   toastContainer.appendChild(toast);
 
   setTimeout(function () {
@@ -61,17 +59,40 @@ function showTenXMessage() {
   }, 4000);
 }
 
-function activateTenXMode() {
-  document.documentElement.setAttribute("data-ten-x-mode", "true");
-  showTenXMessage();
-  clearTimeout(tenXModeTimeout);
+function getSavedTenXMode() {
+  return localStorage.getItem(tenXModeStorageKey) === "true";
+}
 
-  tenXModeTimeout = setTimeout(function () {
+function applyTenXMode(isActive) {
+  if (isActive) {
+    document.documentElement.setAttribute("data-ten-x-mode", "true");
+  } else {
     document.documentElement.removeAttribute("data-ten-x-mode");
-  }, 10000);
+  }
+
+  if (brandMark) {
+    brandMark.title = isActive
+      ? "Hold Shift and click to turn off 10X Mode"
+      : "Hold Shift and click to turn on 10X Mode";
+  }
+}
+
+function toggleTenXMode() {
+  const isActive =
+    document.documentElement.getAttribute("data-ten-x-mode") === "true";
+  const newMode = !isActive;
+
+  localStorage.setItem(tenXModeStorageKey, String(newMode));
+  applyTenXMode(newMode);
+  showTenXMessage(
+    newMode
+      ? "10X MODE ON — Momentum activated 🚀"
+      : "10X MODE OFF — Back to regular colors"
+  );
 }
 
 applyTheme(getSavedTheme());
+applyTenXMode(getSavedTenXMode());
 
 if (themeToggleButton) {
   themeToggleButton.addEventListener("click", toggleTheme);
@@ -82,30 +103,12 @@ if (logoutButton) {
 }
 
 if (brandMark) {
-  brandMark.title = "Hold Shift and click to unlock 10X Mode";
-
   brandMark.addEventListener("click", function (event) {
     if (!event.shiftKey) {
       return;
     }
 
     event.preventDefault();
-    activateTenXMode();
+    toggleTenXMode();
   });
 }
-
-// Easter egg: type "10X" while focus is outside a form field.
-document.addEventListener("keydown", function (event) {
-  const isFormField = event.target.matches("input, textarea, select");
-
-  if (isFormField || event.ctrlKey || event.metaKey || event.altKey) {
-    return;
-  }
-
-  tenXSequence = `${tenXSequence}${event.key.toLowerCase()}`.slice(-3);
-
-  if (tenXSequence === "10x") {
-    tenXSequence = "";
-    activateTenXMode();
-  }
-});
