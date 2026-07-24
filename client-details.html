@@ -28,10 +28,49 @@
   </header>
 
   <main class="page-container">
-    <h1 class="page-title">Client Details</h1>
+    <section class="page-header">
+      <div>
+        <h1 class="page-title">Client Details</h1>
+        <p class="text-muted">Review the selected client's information.</p>
+      </div>
+
+      <a class="btn btn-secondary" href="clients.html">Back to Clients</a>
+    </section>
+
+    <dl id="client-details-content" class="card table-container">
+      <div class="form-group">
+        <dt class="form-label">Full Name</dt>
+        <dd id="client-name"></dd>
+      </div>
+
+      <div class="form-group">
+        <dt class="form-label">Email</dt>
+        <dd id="client-email"></dd>
+      </div>
+
+      <div class="form-group">
+        <dt class="form-label">Company</dt>
+        <dd id="client-company"></dd>
+      </div>
+
+      <div class="form-group">
+        <dt class="form-label">Status</dt>
+        <dd id="client-status"></dd>
+      </div>
+
+      <div class="form-group">
+        <dt class="form-label">Created At</dt>
+        <dd id="client-created"></dd>
+      </div>
+    </dl>
+
+    <p id="client-not-found" class="card empty-message">
+      Client not found.
+    </p>
   </main>
 
   <script src="js/guard.js"></script>
   <script src="js/common.js"></script>
+  <script src="js/client-details.js"></script>
 </body>
 </html>

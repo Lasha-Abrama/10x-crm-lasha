@@ -74,6 +74,16 @@ function renderClients(clients) {
     row.appendChild(actionsCell);
     clientsTableBody.appendChild(row);
   });
+
+  const viewButtons = document.querySelectorAll(".view-client-button");
+
+  viewButtons.forEach(function (viewButton) {
+    viewButton.addEventListener("click", function () {
+      const clientId = viewButton.dataset.clientId;
+
+      window.location.href = `client-details.html?id=${clientId}`;
+    });
+  });
 }
 
 function applyClientFilters() {
