@@ -37,37 +37,133 @@
       <a class="btn btn-secondary" href="clients.html">Back to Clients</a>
     </section>
 
-    <dl id="client-details-content" class="card table-container">
+    <!-- Client Details -->
+    <section id="client-details-content">
+      <dl class="card client-details-card">
+        <div class="form-group">
+          <dt class="form-label">Full Name</dt>
+          <dd id="client-name"></dd>
+        </div>
+
+        <div class="form-group">
+          <dt class="form-label">Email</dt>
+          <dd id="client-email"></dd>
+        </div>
+
+        <div class="form-group">
+          <dt class="form-label">Company</dt>
+          <dd id="client-company"></dd>
+        </div>
+
+        <div class="form-group">
+          <dt class="form-label">Status</dt>
+          <dd id="client-status"></dd>
+        </div>
+
+        <div class="form-group">
+          <dt class="form-label">Created At</dt>
+          <dd id="client-created"></dd>
+        </div>
+      </dl>
+
+      <div class="client-details-actions">
+        <button
+          type="button"
+          id="edit-client-button"
+          class="btn btn-primary"
+        >
+          Edit Client
+        </button>
+      </div>
+    </section>
+
+    <!-- Edit Client Form -->
+    <form id="edit-client-form" class="card client-details-card hidden" novalidate>
       <div class="form-group">
-        <dt class="form-label">Full Name</dt>
-        <dd id="client-name"></dd>
+        <label class="form-label" for="edit-client-name">Full Name</label>
+        <input
+          class="form-input"
+          type="text"
+          id="edit-client-name"
+          name="fullName"
+          placeholder="Enter full name"
+          required
+        >
+        <p class="error-message"></p>
       </div>
 
       <div class="form-group">
-        <dt class="form-label">Email</dt>
-        <dd id="client-email"></dd>
+        <label class="form-label" for="edit-client-email">Email</label>
+        <input
+          class="form-input"
+          type="email"
+          id="edit-client-email"
+          name="email"
+          placeholder="Enter email address"
+          required
+        >
+        <p class="error-message"></p>
       </div>
 
       <div class="form-group">
-        <dt class="form-label">Company</dt>
-        <dd id="client-company"></dd>
+        <label class="form-label" for="edit-client-company">Company</label>
+        <input
+          class="form-input"
+          type="text"
+          id="edit-client-company"
+          name="company"
+          placeholder="Enter company name"
+        >
       </div>
 
       <div class="form-group">
-        <dt class="form-label">Status</dt>
-        <dd id="client-status"></dd>
+        <label class="form-label" for="edit-client-status">Status</label>
+        <select
+          class="form-select"
+          id="edit-client-status"
+          name="status"
+          required
+        >
+          <option value="Lead">Lead</option>
+          <option value="Contacted">Contacted</option>
+          <option value="Won">Won</option>
+          <option value="Lost">Lost</option>
+        </select>
+        <p class="error-message"></p>
       </div>
 
       <div class="form-group">
-        <dt class="form-label">Created At</dt>
-        <dd id="client-created"></dd>
+        <label class="form-label" for="edit-client-deal-value">
+          Deal Value
+        </label>
+        <input
+          class="form-input"
+          type="number"
+          id="edit-client-deal-value"
+          name="dealValue"
+          placeholder="Enter deal value"
+          step="any"
+        >
+        <p class="error-message"></p>
       </div>
-    </dl>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">
+          Save Changes
+        </button>
+
+        <button type="button" id="cancel-edit-button" class="btn btn-secondary">
+          Cancel
+        </button>
+      </div>
+    </form>
 
     <p id="client-not-found" class="card empty-message">
       Client not found.
     </p>
   </main>
+
+  <div class="toast-container"></div>
 
   <script src="js/guard.js"></script>
   <script src="js/common.js"></script>
