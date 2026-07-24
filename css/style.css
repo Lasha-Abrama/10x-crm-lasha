@@ -221,6 +221,29 @@ body {
   white-space: nowrap;
 }
 
+.page-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 2rem;
+}
+
+.page-header .page-title {
+  margin-bottom: 0.5rem;
+}
+
+.clients-controls {
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.control-group {
+  display: flex;
+  flex-direction: column;
+}
+
 .stats-grid {
   display: grid;
   grid-template-columns: repeat(4, minmax(0, 1fr));
@@ -344,6 +367,19 @@ body {
   .dashboard-header {
     flex-direction: column;
     gap: 1rem;
+  }
+
+  .page-header {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .page-header .btn {
+    width: 100%;
+  }
+
+  .clients-controls {
+    grid-template-columns: 1fr;
   }
 
   .stats-grid {

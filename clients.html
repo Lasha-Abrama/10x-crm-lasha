@@ -29,7 +29,49 @@
   </header>
 
   <main class="page-container">
-    <h1 class="page-title">Clients</h1>
+    <section class="page-header">
+      <div>
+        <h1 class="page-title">Clients</h1>
+        <p class="text-muted">Manage and review your CRM clients.</p>
+      </div>
+
+      <button type="button" id="add-client-button" class="btn btn-primary">
+        Add Client
+      </button>
+    </section>
+
+    <section class="card clients-controls">
+      <div class="control-group">
+        <label class="form-label" for="client-search">Search</label>
+        <input
+          class="form-input"
+          type="search"
+          id="client-search"
+          name="clientSearch"
+          placeholder="Search clients..."
+        >
+      </div>
+
+      <div class="control-group">
+        <label class="form-label" for="status-filter">Status</label>
+        <select class="form-select" id="status-filter" name="statusFilter">
+          <option value="all">All Statuses</option>
+          <option value="Active">Active</option>
+          <option value="Lead">Lead</option>
+          <option value="Inactive">Inactive</option>
+        </select>
+      </div>
+
+      <div class="control-group">
+        <label class="form-label" for="sort-clients">Sort By</label>
+        <select class="form-select" id="sort-clients" name="sortClients">
+          <option value="newest">Newest First</option>
+          <option value="oldest">Oldest First</option>
+          <option value="name-asc">Name A–Z</option>
+          <option value="name-desc">Name Z–A</option>
+        </select>
+      </div>
+    </section>
   </main>
 
   <script src="js/guard.js"></script>
