@@ -6,6 +6,7 @@ const clientCompanyElement = document.querySelector("#client-company");
 const clientStatusElement = document.querySelector("#client-status");
 const clientCreatedElement = document.querySelector("#client-created");
 const editClientButton = document.querySelector("#edit-client-button");
+const deleteClientButton = document.querySelector("#delete-client-button");
 const editClientForm = document.querySelector("#edit-client-form");
 const cancelEditButton = document.querySelector("#cancel-edit-button");
 const editClientNameInput = document.querySelector("#edit-client-name");
@@ -204,6 +205,34 @@ function displayClientDetails() {
   ).toLocaleDateString();
 }
 
+function deleteClient() {
+  const shouldDelete = confirm(
+    "Are you sure you want to delete this client?"
+  );
+
+  if (!shouldDelete) {
+    return;
+  }
+
+  const clients = getClients();
+  const clientId = getClientIdFromUrl();
+  const updatedClients = clients.filter(function (client) {
+    return Number(client.id) !== Number(clientId);
+  });
+
+  if (updatedClients.length === clients.length) {
+    displayClientDetails();
+    return;
+  }
+
+  localStorage.setItem("crm_clients", JSON.stringify(updatedClients));
+  showMessage("Client deleted successfully!", "success");
+
+  setTimeout(function () {
+    window.location.href = "clients.html";
+  }, 1500);
+}
+
 editClientButton.addEventListener("click", function () {
   const client = getClientById();
 
@@ -222,6 +251,8 @@ cancelEditButton.addEventListener("click", function () {
   clearEditErrors();
   displayClientDetails();
 });
+
+deleteClientButton.addEventListener("click", deleteClient);
 
 editClientForm.addEventListener("submit", function (event) {
   event.preventDefault();
