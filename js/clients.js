@@ -3,6 +3,7 @@ const clientsTableBody = document.querySelector("#clients-table-body");
 const clientsEmptyMessage = document.querySelector("#clients-empty-message");
 const clientSearchInput = document.getElementById("client-search");
 const statusFilter = document.getElementById("status-filter");
+const sortClientsSelect = document.getElementById("sort-clients");
 
 function getClients() {
   const savedClients = localStorage.getItem("crm_clients");
@@ -76,6 +77,7 @@ function renderClients(clients) {
 function applyClientFilters() {
   const searchText = clientSearchInput.value.trim().toLowerCase();
   const selectedStatus = statusFilter.value;
+  const selectedSort = sortClientsSelect.value;
   const filteredClients = clients.filter(function (client) {
     const fullName = (client.fullName || "").toLowerCase();
     const email = (client.email || "").toLowerCase();
@@ -90,12 +92,45 @@ function applyClientFilters() {
     return matchesSearch && matchesStatus;
   });
 
-  renderClients(filteredClients);
+  const sortedClients = [...filteredClients];
+
+  if (selectedSort === "newest") {
+    sortedClients.sort(function (firstClient, secondClient) {
+      const firstDate = new Date(firstClient.createdAt).getTime() || 0;
+      const secondDate = new Date(secondClient.createdAt).getTime() || 0;
+
+      return secondDate - firstDate;
+    });
+  } else if (selectedSort === "oldest") {
+    sortedClients.sort(function (firstClient, secondClient) {
+      const firstDate = new Date(firstClient.createdAt).getTime() || 0;
+      const secondDate = new Date(secondClient.createdAt).getTime() || 0;
+
+      return firstDate - secondDate;
+    });
+  } else if (selectedSort === "name-asc") {
+    sortedClients.sort(function (firstClient, secondClient) {
+      const firstName = firstClient.fullName || "";
+      const secondName = secondClient.fullName || "";
+
+      return firstName.localeCompare(secondName);
+    });
+  } else if (selectedSort === "name-desc") {
+    sortedClients.sort(function (firstClient, secondClient) {
+      const firstName = firstClient.fullName || "";
+      const secondName = secondClient.fullName || "";
+
+      return secondName.localeCompare(firstName);
+    });
+  }
+
+  renderClients(sortedClients);
 }
 
-if (clientSearchInput && statusFilter) {
+if (clientSearchInput && statusFilter && sortClientsSelect) {
   clientSearchInput.addEventListener("input", applyClientFilters);
   statusFilter.addEventListener("change", applyClientFilters);
+  sortClientsSelect.addEventListener("change", applyClientFilters);
 }
 
-renderClients(clients);
+applyClientFilters();
