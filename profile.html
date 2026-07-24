@@ -38,22 +38,18 @@
 
     <!-- Profile Details -->
     <section id="profile-details" class="card profile-card">
-      <dl>
-        <div class="form-group">
-          <dt class="form-label">Full Name</dt>
-          <dd id="profile-name"></dd>
-        </div>
+      <div class="profile-summary">
+        <div id="profile-avatar" class="profile-avatar" aria-hidden="true"></div>
 
-        <div class="form-group">
-          <dt class="form-label">Email</dt>
-          <dd id="profile-email"></dd>
+        <div class="profile-summary-content">
+          <h2 id="profile-name"></h2>
+          <p id="profile-email" class="text-muted"></p>
+          <p id="profile-company" class="text-muted"></p>
+          <p class="profile-member-since text-muted">
+            Member since <span id="profile-created-at"></span>
+          </p>
         </div>
-
-        <div class="form-group">
-          <dt class="form-label">Account Created At</dt>
-          <dd id="profile-created-at"></dd>
-        </div>
-      </dl>
+      </div>
 
       <div class="profile-actions">
         <button
@@ -82,16 +78,14 @@
       </div>
 
       <div class="form-group">
-        <label class="form-label" for="edit-profile-email">Email</label>
+        <label class="form-label" for="edit-profile-company">Company</label>
         <input
           class="form-input"
-          type="email"
-          id="edit-profile-email"
-          name="email"
-          placeholder="Enter email address"
-          required
+          type="text"
+          id="edit-profile-company"
+          name="company"
+          placeholder="Enter company name"
         >
-        <p class="error-message" id="profile-email-error"></p>
       </div>
 
       <div class="form-actions">
