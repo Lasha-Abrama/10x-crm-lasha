@@ -83,6 +83,38 @@
           Delete Client
         </button>
       </div>
+
+      <!-- Client Notes -->
+      <section class="client-notes-section card">
+        <div class="section-header">
+          <h2>Notes</h2>
+        </div>
+
+        <form id="add-note-form" novalidate>
+          <div class="form-group">
+            <label class="form-label" for="note-text">Add Note</label>
+            <textarea
+              class="form-input form-textarea"
+              id="note-text"
+              name="noteText"
+              rows="4"
+              placeholder="Write a note about this client..."
+              required
+            ></textarea>
+            <p class="error-message" id="note-error"></p>
+          </div>
+
+          <button type="submit" class="btn btn-primary">
+            Add Note
+          </button>
+        </form>
+
+        <div id="notes-list" class="notes-list"></div>
+
+        <p id="notes-empty-message" class="empty-message">
+          No notes yet.
+        </p>
+      </section>
     </section>
 
     <!-- Edit Client Form -->

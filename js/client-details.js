@@ -16,6 +16,11 @@ const editClientStatusInput = document.querySelector("#edit-client-status");
 const editClientDealValueInput = document.querySelector(
   "#edit-client-deal-value"
 );
+const addNoteForm = document.querySelector("#add-note-form");
+const noteTextInput = document.querySelector("#note-text");
+const noteError = document.querySelector("#note-error");
+const notesList = document.querySelector("#notes-list");
+const notesEmptyMessage = document.querySelector("#notes-empty-message");
 const validStatuses = ["Lead", "Contacted", "Won", "Lost"];
 
 function getClientIdFromUrl() {
@@ -183,6 +188,36 @@ function showMessage(message, type) {
   }, 3000);
 }
 
+function renderNotes(notes) {
+  notesList.textContent = "";
+
+  if (notes.length === 0) {
+    notesList.classList.add("hidden");
+    notesEmptyMessage.classList.add("visible");
+    return;
+  }
+
+  notesList.classList.remove("hidden");
+  notesEmptyMessage.classList.remove("visible");
+
+  notes.forEach(function (note) {
+    const noteCard = document.createElement("article");
+    const noteText = document.createElement("p");
+    const noteDate = document.createElement("p");
+
+    noteCard.classList.add("note-card");
+    noteText.classList.add("note-text");
+    noteDate.classList.add("note-date", "text-muted");
+
+    noteText.textContent = note.text;
+    noteDate.textContent = new Date(note.createdAt).toLocaleString();
+
+    noteCard.appendChild(noteText);
+    noteCard.appendChild(noteDate);
+    notesList.appendChild(noteCard);
+  });
+}
+
 function displayClientDetails() {
   const client = getClientById();
 
@@ -203,6 +238,9 @@ function displayClientDetails() {
   clientCreatedElement.textContent = new Date(
     client.createdAt
   ).toLocaleDateString();
+
+  const notes = Array.isArray(client.notes) ? client.notes : [];
+  renderNotes(notes);
 }
 
 function deleteClient() {
@@ -253,6 +291,57 @@ cancelEditButton.addEventListener("click", function () {
 });
 
 deleteClientButton.addEventListener("click", deleteClient);
+
+addNoteForm.addEventListener("submit", function (event) {
+  event.preventDefault();
+
+  const noteText = noteTextInput.value.trim();
+
+  noteError.textContent = "";
+  noteTextInput.classList.remove("input-error");
+
+  if (noteText.length < 2) {
+    noteError.textContent = "Note must be at least 2 characters";
+    noteTextInput.classList.add("input-error");
+    return;
+  }
+
+  if (noteText.length > 500) {
+    noteError.textContent = "Note must not exceed 500 characters";
+    noteTextInput.classList.add("input-error");
+    return;
+  }
+
+  const clients = getClients();
+  const clientId = Number(getClientIdFromUrl());
+  const clientIndex = clients.findIndex(function (client) {
+    return Number(client.id) === clientId;
+  });
+
+  if (clientIndex === -1) {
+    displayClientDetails();
+    return;
+  }
+
+  if (!Array.isArray(clients[clientIndex].notes)) {
+    clients[clientIndex].notes = [];
+  }
+
+  const newNote = {
+    id: Date.now(),
+    text: noteTextInput.value.trim(),
+    createdAt: new Date().toISOString()
+  };
+
+  clients[clientIndex].notes.push(newNote);
+  localStorage.setItem("crm_clients", JSON.stringify(clients));
+
+  noteTextInput.value = "";
+  noteError.textContent = "";
+  noteTextInput.classList.remove("input-error");
+  renderNotes(clients[clientIndex].notes);
+  showMessage("Note added successfully!", "success");
+});
 
 editClientForm.addEventListener("submit", function (event) {
   event.preventDefault();
