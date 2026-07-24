@@ -33,6 +33,16 @@ const clients = [];
 let clientsReady = false;
 let selectedStatus = "all";
 
+function updateStatusSelectStyle(selectElement, status) {
+  selectElement.classList.remove(
+    "status-select-lead",
+    "status-select-contacted",
+    "status-select-won",
+    "status-select-lost"
+  );
+  selectElement.classList.add(`status-select-${status.toLowerCase()}`);
+}
+
 function showClientsLoading() {
   clientsReady = false;
   clientsList.textContent = "";
@@ -122,6 +132,7 @@ function showAddClientError(input, errorElement, message) {
 function openAddClientModal() {
   addClientForm.reset();
   clearAddClientErrors();
+  updateStatusSelectStyle(newClientStatusInput, newClientStatusInput.value);
   addClientModal.classList.remove("hidden");
   newClientNameInput.focus();
 }
@@ -314,7 +325,8 @@ function renderClients(visibleClients) {
     statusLabel.textContent = "Status";
     statusLabel.htmlFor = `client-status-${client.id}`;
 
-    statusSelect.classList.add("form-select");
+    statusSelect.classList.add("form-select", "status-select");
+    updateStatusSelectStyle(statusSelect, client.status || "Lead");
     statusSelect.id = `client-status-${client.id}`;
     statusSelect.setAttribute(
       "aria-label",
@@ -432,12 +444,7 @@ function getVisibleClients() {
   const selectedSort = sortClientsSelect.value;
   const filteredClients = clients.filter(function (client) {
     const name = (client.name || "").toLowerCase();
-    const email = (client.email || "").toLowerCase();
-    const company = (client.company || "").toLowerCase();
-    const matchesSearch =
-      name.includes(searchText) ||
-      email.includes(searchText) ||
-      company.includes(searchText);
+    const matchesSearch = name.startsWith(searchText);
     const matchesStatus =
       selectedStatus === "all" || client.status === selectedStatus;
 
@@ -446,26 +453,44 @@ function getVisibleClients() {
 
   const sortedClients = [...filteredClients];
 
-  if (selectedSort === "newest") {
+  if (selectedSort === "newest" || selectedSort === "oldest") {
     sortedClients.sort(function (firstClient, secondClient) {
       const firstDate = new Date(firstClient.createdAt).getTime() || 0;
       const secondDate = new Date(secondClient.createdAt).getTime() || 0;
 
-      return secondDate - firstDate;
+      if (selectedSort === "newest") {
+        return secondDate - firstDate;
+      }
+
+      return firstDate - secondDate;
     });
-  } else if (selectedSort === "name-asc") {
+  } else if (
+    selectedSort === "name-asc" ||
+    selectedSort === "name-desc"
+  ) {
     sortedClients.sort(function (firstClient, secondClient) {
       const firstName = firstClient.name || "";
       const secondName = secondClient.name || "";
 
-      return firstName.localeCompare(secondName);
+      if (selectedSort === "name-asc") {
+        return firstName.localeCompare(secondName);
+      }
+
+      return secondName.localeCompare(firstName);
     });
-  } else if (selectedSort === "deal-desc") {
+  } else if (
+    selectedSort === "deal-desc" ||
+    selectedSort === "deal-asc"
+  ) {
     sortedClients.sort(function (firstClient, secondClient) {
       const firstDealValue = Number(firstClient.dealValue) || 0;
       const secondDealValue = Number(secondClient.dealValue) || 0;
 
-      return secondDealValue - firstDealValue;
+      if (selectedSort === "deal-desc") {
+        return secondDealValue - firstDealValue;
+      }
+
+      return firstDealValue - secondDealValue;
     });
   }
 
@@ -484,6 +509,10 @@ if (clientSearchInput && sortClientsSelect) {
   clientSearchInput.addEventListener("input", applyClientFilters);
   sortClientsSelect.addEventListener("change", applyClientFilters);
 }
+
+newClientStatusInput.addEventListener("change", function () {
+  updateStatusSelectStyle(newClientStatusInput, newClientStatusInput.value);
+});
 
 statusFilterButtons.forEach(function (filterButton) {
   filterButton.addEventListener("click", function () {

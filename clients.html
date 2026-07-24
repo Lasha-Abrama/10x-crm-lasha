@@ -21,8 +21,14 @@
       </div>
 
       <div class="navbar-actions">
-        <button type="button" id="theme-toggle" class="btn btn-secondary">
-          Dark Mode
+        <button
+          type="button"
+          id="theme-toggle"
+          class="btn btn-secondary theme-toggle"
+          aria-label="Switch to dark mode"
+          title="Switch to dark mode"
+        >
+          ☾
         </button>
         <button type="button" id="logout-button" class="btn btn-secondary">
           Log Out
@@ -51,7 +57,7 @@
           type="search"
           id="client-search"
           name="clientSearch"
-          placeholder="Search clients..."
+          placeholder="Search clients by name..."
         >
       </div>
 
@@ -105,9 +111,12 @@
       <div class="control-group">
         <label class="form-label" for="sort-clients">Sort By</label>
         <select class="form-select" id="sort-clients" name="sortClients">
-          <option value="newest">Newest First</option>
-          <option value="name-asc">Name A–Z</option>
-          <option value="deal-desc">Deal Value: High–Low</option>
+          <option value="newest">Newest</option>
+          <option value="oldest">Oldest</option>
+          <option value="name-asc">Name: A–Z</option>
+          <option value="name-desc">Name: Z–A</option>
+          <option value="deal-desc">Deal Value: High to Low</option>
+          <option value="deal-asc">Deal Value: Low to High</option>
         </select>
       </div>
     </section>
@@ -202,7 +211,7 @@
         <div class="form-group">
           <label class="form-label" for="new-client-status">Status</label>
           <select
-            class="form-select"
+            class="form-select status-select status-select-lead"
             id="new-client-status"
             name="status"
             required

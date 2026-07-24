@@ -21,8 +21,14 @@
       </div>
 
       <div class="navbar-actions">
-        <button type="button" id="theme-toggle" class="btn btn-secondary">
-          Dark Mode
+        <button
+          type="button"
+          id="theme-toggle"
+          class="btn btn-secondary theme-toggle"
+          aria-label="Switch to dark mode"
+          title="Switch to dark mode"
+        >
+          ☾
         </button>
         <button type="button" id="logout-button" class="btn btn-secondary">
           Log Out
@@ -193,7 +199,7 @@
       <div class="form-group">
         <label class="form-label" for="edit-client-status">Status</label>
         <select
-          class="form-select"
+          class="form-select status-select status-select-lead"
           id="edit-client-status"
           name="status"
           required

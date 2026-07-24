@@ -76,6 +76,18 @@ function getStatusClass(status) {
   return "status-lead";
 }
 
+function updateEditStatusStyle() {
+  editClientStatusInput.classList.remove(
+    "status-select-lead",
+    "status-select-contacted",
+    "status-select-won",
+    "status-select-lost"
+  );
+  editClientStatusInput.classList.add(
+    `status-select-${editClientStatusInput.value.toLowerCase()}`
+  );
+}
+
 function displayClientAvatar(client) {
   clientAvatarFallback.textContent = getClientInitials(client.name);
 
@@ -97,6 +109,7 @@ function populateEditForm(client) {
   editClientEmailInput.value = client.email || "";
   editClientCompanyInput.value = client.company || "";
   editClientStatusInput.value = client.status || "";
+  updateEditStatusStyle();
 
   if (client.dealValue === undefined || client.dealValue === null) {
     editClientDealValueInput.value = "";
@@ -373,6 +386,7 @@ cancelEditButton.addEventListener("click", function () {
 
 deleteClientButton.addEventListener("click", deleteClient);
 reminderButton.addEventListener("click", setClientReminder);
+editClientStatusInput.addEventListener("change", updateEditStatusStyle);
 
 addNoteForm.addEventListener("submit", function (event) {
   event.preventDefault();
