@@ -85,5 +85,13 @@ loginForm.addEventListener("submit", function (event) {
     return;
   }
 
-  console.log("Login successful", matchedUser);
+  const session = {
+    userId: matchedUser.id,
+    fullName: matchedUser.fullName,
+    email: matchedUser.email,
+    loggedInAt: new Date().toISOString()
+  };
+
+  localStorage.setItem("crm_session", JSON.stringify(session));
+  console.log("Session created successfully");
 });
