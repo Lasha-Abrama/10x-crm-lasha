@@ -45,7 +45,7 @@ async function fetchClientsFromApi() {
         status: "Lead",
         dealValue: 0,
         notes: [],
-        createdAt: new Date().toISOString()
+        createdAt: new Date().toISOString(),
       };
     });
 
