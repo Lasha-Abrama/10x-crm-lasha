@@ -1,24 +1,26 @@
 # 10X CRM
 
+## About
+
 10X CRM is a frontend customer relationship management application for individuals and small teams. It provides a simple way to create an account, review sales activity, organize clients, record notes, and manage a user profile. The project was built as an educational application using only browser technologies.
 
 ## Features
 
 - **Authentication:** Sign Up and Login forms with validation, duplicate-email checks, browser-based sessions, protected pages, and Logout.
-- **Dashboard:** Personalized welcome message, current date, and client statistics for total clients, active deals, won revenue, and new clients.
+- **Dashboard:** Personalized greeting, live date and time, client statistics, pipeline totals, and the five newest clients.
 - **Client management:** Add, view, edit, and delete clients.
 - **Search:** Find clients by their saved information while typing.
 - **Filtering:** Filter clients by Lead, Contacted, Won, or Lost status.
-- **Sorting:** Sort clients by creation date or name.
-- **Client details:** Review a selected client's information and deal value.
+- **Sorting:** Sort clients by newest date, name, or highest deal value.
+- **Client details:** Review a selected client's avatar, contact information, status, deal value, and account date.
 - **Notes:** Add dated notes to a selected client.
 - **Reminder:** Schedule a one-minute follow-up toast for a client during the current page session.
-- **Profile:** View and edit account details, change the password, and reset CRM client data.
+- **Profile:** View account details, update name and company, change the password, and reset CRM client data.
 - **Theme switching:** Switch between light and dark themes and keep the selected theme between pages.
 - **LocalStorage persistence:** Keep users, the current session, clients, and theme preferences in the browser.
 - **Error handling and Retry:** Show loading and error states and retry a failed client API request.
 
-## Technologies
+## Tech Stack
 
 - HTML5
 - CSS3
@@ -27,7 +29,7 @@
 - Fetch API
 - DummyJSON API
 
-## Getting Started
+## How to Run
 
 1. Clone or download the repository.
 2. Open the `10x-crm` folder in a code editor.
@@ -36,6 +38,10 @@
 5. Create an account on the Sign Up page, then log in to access the protected CRM pages.
 
 A local server is recommended because the application uses the Fetch API to load initial client data.
+
+## Test Account
+
+No fixed test account is required. Open the Sign Up page to create an account, then use the same email and password on the Login page.
 
 ## Project Structure
 
@@ -91,9 +97,9 @@ The returned users are converted into the project's client format and saved in L
 
 - **Login:** Validates credentials, creates the current session, and opens the Dashboard.
 - **Sign Up:** Validates account information and saves a new user.
-- **Dashboard:** Displays the logged-in user's name, date, and client statistics.
-- **Clients:** Displays clients and provides search, status filtering, sorting, creation, and access to client details.
-- **Profile:** Displays account information and supports profile updates, password changes, and CRM data reset.
+- **Dashboard:** Displays the user's first name, a live clock, statistics, pipeline totals, and recent clients.
+- **Clients:** Displays client cards with search, status filters, sorting, inline status updates, creation, deletion, and details access.
+- **Profile:** Displays account information and supports name/company updates, password changes, and CRM data reset.
 
 ## Future Improvements
 
@@ -106,3 +112,7 @@ The returned users are converted into the project's client format and saved in L
 ## Author
 
 Lasha Abrama
+
+## Credits
+
+Initial client data and client API requests use the [DummyJSON Users API](https://dummyjson.com/docs/users). The application code and documentation were created for the 10X JavaScript exam project.

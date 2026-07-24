@@ -369,6 +369,14 @@ function renderClients(visibleClients) {
       event.stopPropagation();
     });
 
+    statusWrapper.addEventListener("click", function (event) {
+      event.stopPropagation();
+    });
+
+    statusWrapper.addEventListener("keydown", function (event) {
+      event.stopPropagation();
+    });
+
     statusSelect.addEventListener("change", function (event) {
       event.stopPropagation();
       updateClientStatus(client.id, statusSelect.value);

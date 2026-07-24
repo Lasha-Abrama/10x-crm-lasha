@@ -23,7 +23,7 @@ Codex
 **Result:**
 The suggestion was used after checking the folders, filenames, page titles, stylesheet links, and script paths. No frameworks, packages, build tools, or application logic were added because they were outside the task.
 
-**What I learned:**
+**What changed and what I learned:**
 I learned how a small multi-page project can separate structure, styling, page logic, shared logic, and documentation. Clear file responsibilities make later tasks easier to understand and debug.
 
 ### Entry 2 — Sign Up Validation
@@ -40,7 +40,7 @@ Codex
 **Result:**
 The response was used with small readability adjustments. Separate `clearErrors()`, `showError()`, and `validateForm()` functions kept each responsibility simple. The result was manually tested with blank values, short names, invalid emails, weak passwords, and mismatched passwords.
 
-**What I learned:**
+**What changed and what I learned:**
 I learned why `event.preventDefault()` keeps the browser from submitting too early, why `trim()` prevents spaces from counting as real content, and how a boolean validation result controls whether the next step is allowed.
 
 ### Entry 3 — Saving Users to localStorage
@@ -57,7 +57,7 @@ Codex
 **Result:**
 The response was used after confirming that validation still stopped invalid submissions. Email values were normalized to lowercase, a timestamp-based id was created, and the saved array was inspected in browser storage. The later success toast and redirect were added only in a separate task.
 
-**What I learned:**
+**What changed and what I learned:**
 I learned that localStorage stores strings, so arrays and objects need JSON conversion. I also learned that `some()` returns `true` as soon as one matching email is found, which makes duplicate checking clear and efficient.
 
 ### Entry 4 — Login Authentication and Session
@@ -72,9 +72,9 @@ Codex
 > Use `find()` to match both the normalized email and unchanged password. Save only `userId`, `fullName`, `email`, and `loggedInAt` in `crm_session`.
 
 **Result:**
-The solution was used after verifying successful and unsuccessful Login attempts. A general “Invalid email or password” message was kept so the page did not reveal which credential was wrong. The session was stored as one object, followed by a toast and delayed Dashboard redirect.
+The solution was modified during the PRD review. Successful and unsuccessful Login attempts were verified, the general “Invalid email or password” message was kept, and the final session uses the PRD timestamp property `loginAt`. Successful Login now redirects directly to the Dashboard.
 
-**What I learned:**
+**What changed and what I learned:**
 I learned how `find()` returns the first matching object, why both credential checks belong in the same condition, and why session data should contain only information needed by the current browser session.
 
 ### Entry 5 — Authentication Guard and Logout
@@ -91,7 +91,7 @@ Codex
 **Result:**
 The response was used and checked on Dashboard, Clients, Client Details, and Profile pages. Protected pages redirected after the session was removed, while Login and Sign Up remained public. `localStorage.clear()` was rejected because it would remove unrelated application data.
 
-**What I learned:**
+**What changed and what I learned:**
 I learned that an authentication guard runs before protected page logic and acts as a simple access check. I also learned why targeted storage removal is safer than clearing every localStorage key.
 
 ### Entry 6 — Shared Theme Switching
@@ -108,13 +108,13 @@ Codex
 **Result:**
 The response was used after checking navigation, cards, forms, badges, and buttons in both themes. CSS variables were overridden inside `html[data-theme="dark"]`, so component rules did not need to be duplicated. Logout continued to remove only the session.
 
-**What I learned:**
+**What changed and what I learned:**
 I learned that one HTML data attribute can select a theme and that CSS variables centralize colors. The toggle label describes the action available next, not the theme already active.
 
 ### Entry 7 — Client Search, Status Filter, and Sorting
 
 **Goal:**
-Let users narrow and order the saved client table while keeping the original client array unchanged.
+Let users narrow and order the saved client cards while keeping the original client array unchanged.
 
 **Tool:**
 ChatGPT and Codex
@@ -123,10 +123,10 @@ ChatGPT and Codex
 > Combine search and status filtering, then sort a copied result by date or name. Search should update while typing and handle missing fields safely.
 
 **Result:**
-The response was modified during debugging. An early error occurred when a client field was missing and `.toLowerCase()` was called on `undefined`. Safe fallback strings were added. The combined function was then tested with search text, Lead/Contacted/Won/Lost filters, and every sort option.
+The response was modified during debugging and the final PRD audit. Safe fallback strings prevent missing fields from causing `.toLowerCase()` errors. Search uses `includes()`, status filter chips combine with the query, and the three final sorts are Newest First, Name A–Z, and Deal Value High–Low.
 
-**What I learned:**
-I learned how `filter()` creates matching subsets, `includes()` or `startsWith()` checks text, and `localeCompare()` orders names. Copying with `[...filteredClients]` prevents `sort()` from changing the original array.
+**What changed and what I learned:**
+I learned how `filter()` creates matching subsets, `includes()` checks text anywhere in a field, and `localeCompare()` orders names. Copying with `[...filteredClients]` prevents `sort()` from changing the original array.
 
 ### Entry 8 — API Client Loading and Retry
 
@@ -140,26 +140,26 @@ Codex
 > Use one shared async loader, check `response.ok`, transform `data.users` with `map()`, handle invalid stored JSON, and let Retry make a fresh request.
 
 **Result:**
-The response was used after both success and failure testing. The API URL was temporarily made invalid to confirm the exact error message and Retry button, then restored. The implementation kept the project’s existing `fullName` property instead of silently mixing two property names.
+The response was used after both success and failure testing. The API URL was temporarily made invalid to confirm the exact error message and Retry button, then restored. API users are now transformed consistently into the PRD client model with the `name` property.
 
-**What I learned:**
+**What changed and what I learned:**
 I learned how `async/await` makes request steps readable, how `try/catch` handles rejected requests, why HTTP failures require an explicit `response.ok` check, and how `map()` transforms external data into the application’s own object shape.
 
 ### Entry 9 — Adding a Client
 
 **Goal:**
-Create a modal form that validates client data, prevents duplicate emails, saves a new client, and updates the table without refreshing.
+Create a modal form that validates client data, prevents duplicate emails, saves a new client, and updates the client cards without refreshing.
 
 **Tool:**
 Codex
 
 **Prompt:**
-> Open and close an Add Client modal, validate all fields together, use `some()` for duplicate emails, push the new client, then reapply current filters and sorting.
+> Open and close an Add Client modal, validate all fields together, use `some()` for duplicate emails, save through the API, then reapply current filters and sorting.
 
 **Result:**
-The solution was used after testing Cancel, invalid values, duplicate email, and successful creation. The modal stayed open when validation failed. A successful save updated both localStorage and the page’s in-memory array, then rendered the current filtered and sorted view.
+The solution was used after testing Cancel, invalid values, duplicate email, API failure, and successful creation. The modal stays open when validation fails. A successful POST updates localStorage and the page’s in-memory array, then renders the current filtered and sorted card view.
 
-**What I learned:**
+**What changed and what I learned:**
 I learned how DOM events control modal visibility and how rendering updated state avoids a page reload. New clients start with `notes: []` so the notes feature always has a predictable array to use later.
 
 ### Entry 10 — Editing and Deleting a Client
@@ -176,7 +176,7 @@ Codex
 **Result:**
 The response was partially used because the separate Client Details page came from an earlier plan that did not fully match the PRD’s modal description. Within the existing project structure, editing and deletion were implemented and tested without changing other clients. The delete operation required confirmation and verified that the array length actually changed.
 
-**What I learned:**
+**What changed and what I learned:**
 I learned that `findIndex()` provides the exact array position needed for an update, while `filter()` creates a new array without the selected record. Numeric id conversion avoids mismatches between URL strings and stored number ids.
 
 ### Entry 11 — Client Notes and Follow-up Reminder
@@ -193,25 +193,25 @@ Codex
 **Result:**
 The response was used after checking empty, short, long, and valid notes. `textContent` was kept to avoid treating user-written note text as HTML. The reminder was tested as a page-session feature and was intentionally not saved to localStorage.
 
-**What I learned:**
+**What changed and what I learned:**
 I learned how nested arrays can keep notes connected to one client. I also learned that `setTimeout()` runs once after a delay, while `setInterval()` repeats until stopped; only `setTimeout()` matched this reminder requirement.
 
 ### Entry 12 — Profile and Password Management
 
 **Goal:**
-Display and update the logged-in user’s profile, prevent duplicate emails, and allow a validated password change without ending the session.
+Display and update the logged-in user’s profile and allow a validated password change without ending the session.
 
 **Tool:**
 Codex
 
 **Prompt:**
-> Find the current user using `crm_session` and `crm_users`. Update only allowed profile fields, and validate current, new, and confirmed passwords before saving.
+> Find the current user using `crm_session` and `crm_users`. Update Full Name and Company, and validate current, new, and confirmed passwords before saving.
 
 **Result:**
-The response was used with careful checks that `id`, `createdAt`, and other user properties stayed unchanged. Profile name and email changes also updated the matching session fields. Password changes updated only the selected user’s password and did not modify clients or theme settings.
+The response was modified to match the PRD exactly. Profile updates change only `fullName` and `company`, while email, id, password, and creation date stay unchanged. The session name is synchronized, and password changes update only the selected user’s password.
 
-**What I learned:**
-I learned how session identifiers connect stored records, how `some()` can ignore the current user during duplicate checks, and how `findIndex()` targets one account. I also learned that plain-text passwords are unsafe in real applications and must be hashed securely on a server.
+**What changed and what I learned:**
+I learned how session identifiers connect stored records and how `findIndex()` targets one account without replacing unrelated data. I also learned that plain-text passwords are unsafe in real applications and must be hashed securely on a server.
 
 ## Prompt Improvement Example
 
