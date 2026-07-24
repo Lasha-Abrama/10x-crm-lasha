@@ -5,6 +5,23 @@
 }
 
 :root {
+  --color-background: #f1f5f9;
+  --color-surface: #ffffff;
+  --color-text: #0f172a;
+  --color-text-muted: #64748b;
+  --color-border: #cbd5e1;
+  --color-accent: #2563eb;
+  --color-accent-hover: #1d4ed8;
+  --color-success: #16a34a;
+  --color-error: #dc2626;
+  --color-input: #ffffff;
+  --color-navigation: #ffffff;
+  --color-button-text: #ffffff;
+  --border-radius: 8px;
+  --shadow-small: 0 2px 8px rgba(15, 23, 42, 0.1);
+}
+
+html[data-theme="dark"] {
   --color-background: #0f172a;
   --color-surface: #1e293b;
   --color-text: #f8fafc;
@@ -14,7 +31,9 @@
   --color-accent-hover: #2563eb;
   --color-success: #22c55e;
   --color-error: #ef4444;
-  --border-radius: 8px;
+  --color-input: #0f172a;
+  --color-navigation: #1e293b;
+  --color-button-text: #ffffff;
   --shadow-small: 0 2px 8px rgba(0, 0, 0, 0.25);
 }
 
@@ -70,6 +89,7 @@ body {
 }
 
 .btn-primary {
+  color: var(--color-button-text);
   background-color: var(--color-accent);
 }
 
@@ -87,6 +107,7 @@ body {
 }
 
 .btn-danger {
+  color: var(--color-button-text);
   background-color: var(--color-error);
 }
 
@@ -110,7 +131,7 @@ body {
   padding: 0.7rem;
   font: inherit;
   color: var(--color-text);
-  background-color: var(--color-background);
+  background-color: var(--color-input);
   border: 1px solid var(--color-border);
   border-radius: var(--border-radius);
 }
@@ -133,7 +154,7 @@ body {
 }
 
 .app-header {
-  background-color: var(--color-surface);
+  background-color: var(--color-navigation);
   border-bottom: 1px solid var(--color-border);
   box-shadow: var(--shadow-small);
 }
@@ -173,11 +194,14 @@ body {
 }
 
 .nav-link.active {
-  color: var(--color-text);
+  color: var(--color-button-text);
   background-color: var(--color-accent);
 }
 
 .navbar-actions {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
   margin-left: auto;
 }
 
