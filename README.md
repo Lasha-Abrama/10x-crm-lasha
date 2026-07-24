@@ -69,7 +69,8 @@ No fixed test account is required. Open the Sign Up page to create an account, t
 │   ├── guard.js            # Authentication guard
 │   ├── login.js            # Login validation and session creation
 │   ├── profile.js          # Profile and password behaviour
-│   └── signup.js           # Sign Up validation and user creation
+│   ├── signup.js           # Sign Up validation and user creation
+│   └── theme-init.js       # Applies appearance before page rendering
 ├── ai-log.md               # AI usage and development reflection
 ├── glossary.md             # Project terminology
 ├── research-note.md        # Project research notes

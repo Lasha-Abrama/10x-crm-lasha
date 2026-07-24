@@ -68,6 +68,7 @@ html[data-theme="dark"] {
 
 html {
   color-scheme: light;
+  background: var(--color-background);
   scroll-behavior: smooth;
 }
 
