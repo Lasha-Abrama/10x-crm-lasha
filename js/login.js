@@ -1,8 +1,10 @@
 const loginForm = document.querySelector("form");
 const emailInput = document.querySelector("#email");
 const passwordInput = document.querySelector("#password");
-const emailErrorElement = emailInput.parentElement.querySelector(".error-message");
-const passwordErrorElement = passwordInput.parentElement.querySelector(".error-message");
+const emailErrorElement =
+  emailInput.parentElement.querySelector(".error-message");
+const passwordErrorElement =
+  passwordInput.parentElement.querySelector(".error-message");
 const loginButton = document.querySelector(".btn-primary");
 
 // The page uses JavaScript validation instead of browser validation.
@@ -64,7 +66,11 @@ function validateLoginForm() {
     const dotPosition = email.indexOf(".", atPosition + 1);
 
     if (atPosition === -1 || dotPosition === -1) {
-      showError(emailInput, emailErrorElement, "Please enter a valid email address.");
+      showError(
+        emailInput,
+        emailErrorElement,
+        "Please enter a valid email address.",
+      );
       isValid = false;
     }
   }
@@ -76,7 +82,7 @@ function validateLoginForm() {
     showError(
       passwordInput,
       passwordErrorElement,
-      "Password must be at least 8 characters."
+      "Password must be at least 8 characters.",
     );
     isValid = false;
   }
@@ -109,7 +115,7 @@ loginForm.addEventListener("submit", function (event) {
     userId: matchedUser.id,
     fullName: matchedUser.fullName,
     email: matchedUser.email,
-    loggedInAt: new Date().toISOString()
+    loggedInAt: new Date().toISOString(),
   };
 
   localStorage.setItem("crm_session", JSON.stringify(session));
