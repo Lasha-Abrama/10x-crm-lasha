@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>10X CRM | Clients</title>
   <link rel="stylesheet" href="css/style.css">
-  <script src="js/clients.js" defer></script>
 </head>
 <body>
   <header class="app-header">
@@ -72,9 +71,30 @@
         </select>
       </div>
     </section>
+
+    <section class="card table-container">
+      <table class="clients-table">
+        <thead>
+          <tr>
+            <th scope="col">Name</th>
+            <th scope="col">Email</th>
+            <th scope="col">Company</th>
+            <th scope="col">Status</th>
+            <th scope="col">Created</th>
+            <th scope="col">Actions</th>
+          </tr>
+        </thead>
+        <tbody id="clients-table-body"></tbody>
+      </table>
+
+      <p id="clients-empty-message" class="empty-message">
+        No clients found.
+      </p>
+    </section>
   </main>
 
   <script src="js/guard.js"></script>
   <script src="js/common.js"></script>
+  <script src="js/clients.js"></script>
 </body>
 </html>
