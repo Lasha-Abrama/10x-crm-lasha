@@ -80,9 +80,9 @@ function filterClientsBySearch() {
     const company = client.company || "";
 
     return (
-      fullName.includes(searchText) ||
-      email.includes(searchText) ||
-      company.toLowerCase().includes(searchText)
+      fullName.startsWith(searchText) ||
+      email.startsWith(searchText) ||
+      company.toLowerCase().startsWith(searchText)
     );
   });
 
