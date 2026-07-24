@@ -76,6 +76,15 @@ body {
   background-color: var(--color-accent-hover);
 }
 
+.btn-secondary {
+  background-color: var(--color-surface);
+  border-color: var(--color-border);
+}
+
+.btn-secondary:hover {
+  background-color: var(--color-border);
+}
+
 .btn-danger {
   background-color: var(--color-error);
 }
@@ -120,6 +129,17 @@ body {
   margin-top: 0.35rem;
   font-size: 0.875rem;
   color: var(--color-error);
+}
+
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.page-header .page-title {
+  margin-bottom: 0;
 }
 
 .auth-layout {
@@ -196,6 +216,11 @@ body {
 
   .btn {
     width: 100%;
+  }
+
+  .page-header {
+    align-items: stretch;
+    flex-direction: column;
   }
 
   .toast-container {
