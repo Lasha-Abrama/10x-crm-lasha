@@ -368,6 +368,18 @@ body {
   font-size: 0.875rem;
 }
 
+.profile-card {
+  width: 100%;
+  max-width: 640px;
+  margin-top: 2rem;
+}
+
+.profile-actions {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1.5rem;
+}
+
 .modal {
   position: fixed;
   inset: 0;

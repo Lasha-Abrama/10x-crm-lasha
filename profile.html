@@ -5,7 +5,6 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>10X CRM | Profile</title>
   <link rel="stylesheet" href="css/style.css">
-  <script src="js/profile.js" defer></script>
 </head>
 <body>
   <header class="app-header">
@@ -15,6 +14,7 @@
       <div class="navbar-links">
         <a class="nav-link" href="dashboard.html">Dashboard</a>
         <a class="nav-link" href="clients.html">Clients</a>
+        <a class="nav-link active" href="profile.html">Profile</a>
       </div>
 
       <div class="navbar-actions">
@@ -29,10 +29,91 @@
   </header>
 
   <main class="page-container">
-    <h1 class="page-title">Profile</h1>
+    <section class="page-header">
+      <div>
+        <h1 class="page-title">Profile</h1>
+        <p class="text-muted">Review and update your account information.</p>
+      </div>
+    </section>
+
+    <!-- Profile Details -->
+    <section id="profile-details" class="card profile-card">
+      <dl>
+        <div class="form-group">
+          <dt class="form-label">Full Name</dt>
+          <dd id="profile-name"></dd>
+        </div>
+
+        <div class="form-group">
+          <dt class="form-label">Email</dt>
+          <dd id="profile-email"></dd>
+        </div>
+
+        <div class="form-group">
+          <dt class="form-label">Account Created At</dt>
+          <dd id="profile-created-at"></dd>
+        </div>
+      </dl>
+
+      <div class="profile-actions">
+        <button
+          type="button"
+          id="edit-profile-button"
+          class="btn btn-primary"
+        >
+          Edit Profile
+        </button>
+      </div>
+    </section>
+
+    <!-- Edit Profile Form -->
+    <form id="edit-profile-form" class="card profile-card hidden" novalidate>
+      <div class="form-group">
+        <label class="form-label" for="edit-profile-name">Full Name</label>
+        <input
+          class="form-input"
+          type="text"
+          id="edit-profile-name"
+          name="fullName"
+          placeholder="Enter full name"
+          required
+        >
+        <p class="error-message" id="profile-name-error"></p>
+      </div>
+
+      <div class="form-group">
+        <label class="form-label" for="edit-profile-email">Email</label>
+        <input
+          class="form-input"
+          type="email"
+          id="edit-profile-email"
+          name="email"
+          placeholder="Enter email address"
+          required
+        >
+        <p class="error-message" id="profile-email-error"></p>
+      </div>
+
+      <div class="form-actions">
+        <button type="submit" class="btn btn-primary">
+          Save Changes
+        </button>
+
+        <button
+          type="button"
+          id="cancel-profile-edit-button"
+          class="btn btn-secondary"
+        >
+          Cancel
+        </button>
+      </div>
+    </form>
   </main>
+
+  <div class="toast-container"></div>
 
   <script src="js/guard.js"></script>
   <script src="js/common.js"></script>
+  <script src="js/profile.js"></script>
 </body>
 </html>
