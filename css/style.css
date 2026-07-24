@@ -488,6 +488,85 @@ body {
   line-height: 1.2;
 }
 
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin-top: 2rem;
+}
+
+.dashboard-section {
+  min-width: 0;
+}
+
+.dashboard-section .section-header h2 {
+  margin-bottom: 0.25rem;
+}
+
+.pipeline-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.pipeline-item {
+  padding: 1rem;
+  background-color: var(--color-background);
+  border: 1px solid var(--color-border);
+  border-radius: var(--border-radius);
+}
+
+.pipeline-label {
+  color: var(--color-text-muted);
+}
+
+.pipeline-value {
+  margin-top: 0.25rem;
+  font-size: 1.5rem;
+  font-weight: 700;
+}
+
+.recent-clients-list {
+  border-top: 1px solid var(--color-border);
+}
+
+.recent-client {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.85rem 0;
+  border-bottom: 1px solid var(--color-border);
+}
+
+.recent-client-name {
+  font-weight: 600;
+}
+
+.recent-client-company,
+.recent-client-date {
+  font-size: 0.875rem;
+}
+
+.recent-client-metadata {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.75rem;
+}
+
+.dashboard-link {
+  display: inline-block;
+  margin-top: 1rem;
+  color: var(--color-accent);
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.dashboard-link:hover {
+  color: var(--color-accent-hover);
+}
+
 .auth-layout {
   display: flex;
   align-items: center;
@@ -551,6 +630,10 @@ body {
   .stats-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+
+  .dashboard-grid {
+    grid-template-columns: 1fr;
+  }
 }
 
 @media (max-width: 599px) {
@@ -605,6 +688,20 @@ body {
 
   .stats-grid {
     grid-template-columns: 1fr;
+  }
+
+  .pipeline-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .recent-client {
+    align-items: flex-start;
+  }
+
+  .recent-client-metadata {
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 0.35rem;
   }
 
   .client-details-actions,

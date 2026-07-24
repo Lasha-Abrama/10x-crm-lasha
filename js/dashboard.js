@@ -1,30 +1,36 @@
-function getSession() {
+function getDashboardSession() {
   const savedSession = localStorage.getItem("crm_session");
 
-  if (savedSession) {
-    return JSON.parse(savedSession);
+  if (!savedSession) {
+    return null;
   }
 
-  return null;
+  try {
+    return JSON.parse(savedSession);
+  } catch (error) {
+    console.error("Could not read the current session:", error);
+    return null;
+  }
 }
 
-const statsGrid = document.querySelector(".stats-grid");
+const dashboardContent = document.querySelector("#dashboard-content");
 const dashboardClientState = document.querySelector("#dashboard-client-state");
 
 function displayUserName() {
-  const session = getSession();
+  const session = getDashboardSession();
   const userNameElement = document.querySelector("#user-name");
+  const fullName = session && session.fullName
+    ? session.fullName.trim()
+    : "";
+  const firstName = fullName ? fullName.split(" ")[0] : "User";
 
-  if (session && session.fullName) {
-    userNameElement.textContent = session.fullName;
-  } else {
-    userNameElement.textContent = "User";
+  if (userNameElement) {
+    userNameElement.textContent = firstName;
   }
 }
 
-function displayCurrentDate() {
+function displayCurrentDateTime() {
   const currentDateElement = document.querySelector("#current-date");
-  const currentDate = new Date();
   const dateOptions = {
     weekday: "long",
     year: "numeric",
@@ -32,10 +38,21 @@ function displayCurrentDate() {
     day: "numeric"
   };
 
-  currentDateElement.textContent = currentDate.toLocaleDateString(
-    undefined,
-    dateOptions
-  );
+  function updateDateTime() {
+    const currentDate = new Date();
+    const formattedDate = currentDate.toLocaleDateString(
+      undefined,
+      dateOptions
+    );
+    const formattedTime = currentDate.toLocaleTimeString();
+
+    if (currentDateElement) {
+      currentDateElement.textContent = `${formattedDate} • ${formattedTime}`;
+    }
+  }
+
+  updateDateTime();
+  setInterval(updateDateTime, 1000);
 }
 
 function displayClientStatistics(clients) {
@@ -77,8 +94,138 @@ function displayClientStatistics(clients) {
   }
 }
 
+function displayPipelineOverview(clients) {
+  const leadClients = clients.filter((client) => {
+    return client.status === "Lead";
+  }).length;
+  const contactedClients = clients.filter((client) => {
+    return client.status === "Contacted";
+  }).length;
+  const wonClients = clients.filter((client) => {
+    return client.status === "Won";
+  }).length;
+  const lostClients = clients.filter((client) => {
+    return client.status === "Lost";
+  }).length;
+
+  const leadElement = document.querySelector("#pipeline-lead");
+  const contactedElement = document.querySelector("#pipeline-contacted");
+  const wonElement = document.querySelector("#pipeline-won");
+  const lostElement = document.querySelector("#pipeline-lost");
+
+  if (leadElement) {
+    leadElement.textContent = leadClients;
+  }
+
+  if (contactedElement) {
+    contactedElement.textContent = contactedClients;
+  }
+
+  if (wonElement) {
+    wonElement.textContent = wonClients;
+  }
+
+  if (lostElement) {
+    lostElement.textContent = lostClients;
+  }
+}
+
+function getStatusClass(status) {
+  if (status === "Contacted") {
+    return "status-contacted";
+  }
+
+  if (status === "Won") {
+    return "status-won";
+  }
+
+  if (status === "Lost") {
+    return "status-lost";
+  }
+
+  return "status-lead";
+}
+
+function displayRecentClients(clients) {
+  const recentClientsList = document.querySelector("#recent-clients-list");
+  const emptyMessage = document.querySelector("#recent-clients-empty");
+
+  if (!recentClientsList || !emptyMessage) {
+    return;
+  }
+
+  const recentClients = [...clients]
+    .sort((firstClient, secondClient) => {
+      const firstDate =
+        new Date(firstClient.createdAt).getTime() || 0;
+      const secondDate =
+        new Date(secondClient.createdAt).getTime() || 0;
+
+      return secondDate - firstDate;
+    })
+    .slice(0, 5);
+
+  recentClientsList.textContent = "";
+
+  if (recentClients.length === 0) {
+    recentClientsList.classList.add("hidden");
+    emptyMessage.classList.add("visible");
+    return;
+  }
+
+  recentClientsList.classList.remove("hidden");
+  emptyMessage.classList.remove("visible");
+
+  recentClients.forEach((client) => {
+    const clientItem = document.createElement("article");
+    const clientInformation = document.createElement("div");
+    const clientName = document.createElement("p");
+    const clientCompany = document.createElement("p");
+    const clientMetadata = document.createElement("div");
+    const statusBadge = document.createElement("span");
+    const createdDate = document.createElement("time");
+    const date = new Date(client.createdAt);
+    const hasValidDate = !Number.isNaN(date.getTime());
+
+    clientItem.classList.add("recent-client");
+    clientName.classList.add("recent-client-name");
+    clientCompany.classList.add("recent-client-company", "text-muted");
+    clientMetadata.classList.add("recent-client-metadata");
+    statusBadge.classList.add(
+      "status-badge",
+      getStatusClass(client.status)
+    );
+    createdDate.classList.add("recent-client-date", "text-muted");
+
+    clientName.textContent = client.name || "Unnamed Client";
+    clientCompany.textContent = client.company || "—";
+    statusBadge.textContent = client.status || "Lead";
+    createdDate.textContent = hasValidDate
+      ? date.toLocaleDateString()
+      : "Date unavailable";
+
+    if (hasValidDate) {
+      createdDate.dateTime = date.toISOString();
+    }
+
+    clientInformation.appendChild(clientName);
+    clientInformation.appendChild(clientCompany);
+    clientMetadata.appendChild(statusBadge);
+    clientMetadata.appendChild(createdDate);
+    clientItem.appendChild(clientInformation);
+    clientItem.appendChild(clientMetadata);
+    recentClientsList.appendChild(clientItem);
+  });
+}
+
+function displayDashboardData(clients) {
+  displayClientStatistics(clients);
+  displayPipelineOverview(clients);
+  displayRecentClients(clients);
+}
+
 function showDashboardLoading() {
-  statsGrid.classList.add("hidden");
+  dashboardContent.classList.add("hidden");
   dashboardClientState.textContent = "Loading clients...";
   dashboardClientState.classList.remove("hidden");
 }
@@ -86,24 +233,24 @@ function showDashboardLoading() {
 function showDashboardError() {
   dashboardClientState.textContent = "";
   dashboardClientState.classList.remove("hidden");
-  statsGrid.classList.add("hidden");
+  dashboardContent.classList.add("hidden");
 
   const errorMessage = document.createElement("p");
   const retryButton = document.createElement("button");
 
-  errorMessage.textContent = "Could not load client statistics.";
+  errorMessage.textContent = "Could not load dashboard data.";
   retryButton.type = "button";
   retryButton.classList.add("btn", "btn-primary");
   retryButton.textContent = "Retry";
   retryButton.addEventListener("click", function () {
-    loadClientStatistics(true);
+    loadDashboardData(true);
   });
 
   dashboardClientState.appendChild(errorMessage);
   dashboardClientState.appendChild(retryButton);
 }
 
-async function loadClientStatistics(forceFreshRequest) {
+async function loadDashboardData(forceFreshRequest) {
   showDashboardLoading();
 
   try {
@@ -113,14 +260,14 @@ async function loadClientStatistics(forceFreshRequest) {
 
     dashboardClientState.textContent = "";
     dashboardClientState.classList.add("hidden");
-    statsGrid.classList.remove("hidden");
-    displayClientStatistics(clients);
+    dashboardContent.classList.remove("hidden");
+    displayDashboardData(clients);
   } catch (error) {
-    console.error("Could not load client statistics:", error);
+    console.error("Could not load dashboard data:", error);
     showDashboardError();
   }
 }
 
 displayUserName();
-displayCurrentDate();
-loadClientStatistics(false);
+displayCurrentDateTime();
+loadDashboardData(false);
