@@ -9,6 +9,16 @@ const loginButton = document.querySelector(".btn-primary");
 loginForm.noValidate = true;
 loginButton.type = "submit";
 
+function getUsers() {
+  const savedUsers = localStorage.getItem("crm_users");
+
+  if (savedUsers) {
+    return JSON.parse(savedUsers);
+  }
+
+  return [];
+}
+
 function clearErrors() {
   emailErrorElement.textContent = "";
   passwordErrorElement.textContent = "";
@@ -58,7 +68,22 @@ loginForm.addEventListener("submit", function (event) {
   event.preventDefault();
   clearErrors();
 
-  if (validateLoginForm()) {
-    console.log("Login validation passed");
+  if (!validateLoginForm()) {
+    return;
   }
+
+  const users = getUsers();
+  const email = emailInput.value.trim().toLowerCase();
+  const password = passwordInput.value;
+  const matchedUser = users.find(function (user) {
+    return user.email === email && user.password === password;
+  });
+
+  if (!matchedUser) {
+    showError(passwordInput, passwordErrorElement, "Invalid email or password");
+    emailInput.classList.add("input-error");
+    return;
+  }
+
+  console.log("Login successful", matchedUser);
 });
