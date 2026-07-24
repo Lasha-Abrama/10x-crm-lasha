@@ -12,6 +12,7 @@ const cancelAddClientButton = document.getElementById("cancel-add-client");
 const addClientForm = document.getElementById("add-client-form");
 const newClientNameInput = document.getElementById("new-client-name");
 const newClientEmailInput = document.getElementById("new-client-email");
+const newClientPhoneInput = document.getElementById("new-client-phone");
 const newClientCompanyInput = document.getElementById("new-client-company");
 const newClientStatusInput = document.getElementById("new-client-status");
 const newClientDealValueInput = document.getElementById(
@@ -19,6 +20,7 @@ const newClientDealValueInput = document.getElementById(
 );
 const newClientNameError = document.getElementById("new-client-name-error");
 const newClientEmailError = document.getElementById("new-client-email-error");
+const newClientPhoneError = document.getElementById("new-client-phone-error");
 const newClientStatusError = document.getElementById(
   "new-client-status-error"
 );
@@ -132,6 +134,7 @@ function validateAddClientForm() {
   let isValid = true;
   const name = newClientNameInput.value.trim();
   const email = newClientEmailInput.value.trim().toLowerCase();
+  const phone = newClientPhoneInput.value.trim();
   const status = newClientStatusInput.value;
   const dealValueText = newClientDealValueInput.value.trim();
 
@@ -156,6 +159,15 @@ function validateAddClientForm() {
     isValid = false;
   }
 
+  if (phone !== "" && phone.length < 6) {
+    showAddClientError(
+      newClientPhoneInput,
+      newClientPhoneError,
+      "Phone number looks too short"
+    );
+    isValid = false;
+  }
+
   if (!validClientStatuses.includes(status)) {
     showAddClientError(
       newClientStatusInput,
@@ -165,17 +177,19 @@ function validateAddClientForm() {
     isValid = false;
   }
 
-  if (dealValueText !== "") {
-    const dealValue = Number(dealValueText);
+  const dealValue = Number(dealValueText);
 
-    if (Number.isNaN(dealValue) || dealValue < 0) {
-      showAddClientError(
-        newClientDealValueInput,
-        newClientDealValueError,
-        "Deal value must be 0 or greater"
-      );
-      isValid = false;
-    }
+  if (
+    dealValueText === "" ||
+    Number.isNaN(dealValue) ||
+    dealValue <= 0
+  ) {
+    showAddClientError(
+      newClientDealValueInput,
+      newClientDealValueError,
+      "Deal value must be a positive number"
+    );
+    isValid = false;
   }
 
   return isValid;
@@ -221,8 +235,10 @@ function renderClients(clients) {
     const statusCell = document.createElement("td");
     const createdCell = document.createElement("td");
     const actionsCell = document.createElement("td");
+    const actionsWrapper = document.createElement("div");
     const statusBadge = document.createElement("span");
     const viewButton = document.createElement("button");
+    const deleteButton = document.createElement("button");
 
     nameCell.textContent = client.name;
     emailCell.textContent = client.email;
@@ -248,7 +264,16 @@ function renderClients(clients) {
     viewButton.classList.add("btn", "btn-secondary", "view-client-button");
     viewButton.textContent = "View";
     viewButton.dataset.clientId = client.id;
-    actionsCell.appendChild(viewButton);
+
+    deleteButton.type = "button";
+    deleteButton.classList.add("btn", "btn-danger", "delete-client-button");
+    deleteButton.textContent = "Delete";
+    deleteButton.dataset.clientId = client.id;
+
+    actionsWrapper.classList.add("table-actions");
+    actionsWrapper.appendChild(viewButton);
+    actionsWrapper.appendChild(deleteButton);
+    actionsCell.appendChild(actionsWrapper);
 
     row.appendChild(nameCell);
     row.appendChild(emailCell);
@@ -268,6 +293,52 @@ function renderClients(clients) {
       window.location.href = `client-details.html?id=${clientId}`;
     });
   });
+
+  const deleteButtons = document.querySelectorAll(".delete-client-button");
+
+  deleteButtons.forEach(function (deleteButton) {
+    deleteButton.addEventListener("click", function () {
+      deleteClientFromList(deleteButton.dataset.clientId);
+    });
+  });
+}
+
+async function deleteClientFromList(clientId) {
+  const clientExists = clients.some(function (client) {
+    return Number(client.id) === Number(clientId);
+  });
+
+  if (!clientExists) {
+    showMessage("Client not found.", "error");
+    return;
+  }
+
+  const shouldDelete = confirm("Delete this client? This cannot be undone.");
+
+  if (!shouldDelete) {
+    return;
+  }
+
+  try {
+    await deleteClientFromApi(clientId);
+
+    const updatedClients = clients.filter(function (client) {
+      return Number(client.id) !== Number(clientId);
+    });
+
+    clients.length = 0;
+
+    updatedClients.forEach(function (client) {
+      clients.push(client);
+    });
+
+    localStorage.setItem("crm_clients", JSON.stringify(clients));
+    applyClientFilters();
+    showMessage("Client deleted", "success");
+  } catch (error) {
+    console.error("Could not delete client:", error);
+    showMessage("Could not delete client. Try again.", "error");
+  }
 }
 
 function applyClientFilters() {
@@ -337,7 +408,7 @@ addClientButton.addEventListener("click", openAddClientModal);
 closeClientModalButton.addEventListener("click", closeAddClientModal);
 cancelAddClientButton.addEventListener("click", closeAddClientModal);
 
-addClientForm.addEventListener("submit", function (event) {
+addClientForm.addEventListener("submit", async function (event) {
   event.preventDefault();
   clearAddClientErrors();
 
@@ -362,33 +433,54 @@ addClientForm.addEventListener("submit", function (event) {
     return;
   }
 
-  const newClient = {
-    id: Date.now(),
+  const clientData = {
     name: newClientNameInput.value.trim(),
     email: newClientEmailInput.value.trim().toLowerCase(),
-    phone: "",
+    phone: newClientPhoneInput.value.trim(),
     company: newClientCompanyInput.value.trim(),
-    image: "",
     status: newClientStatusInput.value,
-    dealValue: newClientDealValueInput.value
-      ? Number(newClientDealValueInput.value)
-      : 1000,
-    notes: [],
-    createdAt: new Date().toISOString()
+    dealValue: Number(newClientDealValueInput.value),
   };
 
-  clients.length = 0;
+  try {
+    const apiClient = await createClientInApi(clientData);
+    const apiClientId = Number(apiClient.id);
+    const apiIdAlreadyExists = currentClients.some(function (client) {
+      return Number(client.id) === apiClientId;
+    });
+    const clientId =
+      apiClientId > 0 && !apiIdAlreadyExists
+        ? apiClientId
+        : Date.now();
+    const newClient = {
+      id: clientId,
+      name: clientData.name,
+      email: clientData.email,
+      phone: clientData.phone,
+      company: clientData.company,
+      image: "",
+      status: clientData.status,
+      dealValue: clientData.dealValue,
+      notes: [],
+      createdAt: new Date().toISOString(),
+    };
 
-  currentClients.forEach(function (client) {
-    clients.push(client);
-  });
+    clients.length = 0;
 
-  clients.push(newClient);
-  localStorage.setItem("crm_clients", JSON.stringify(clients));
+    currentClients.forEach(function (client) {
+      clients.push(client);
+    });
 
-  closeAddClientModal();
-  applyClientFilters();
-  showMessage("Client added successfully!", "success");
+    clients.unshift(newClient);
+    localStorage.setItem("crm_clients", JSON.stringify(clients));
+
+    closeAddClientModal();
+    applyClientFilters();
+    showMessage("Client added ✓", "success");
+  } catch (error) {
+    console.error("Could not add client:", error);
+    showMessage("Could not add client. Try again.", "error");
+  }
 });
 
 loadClientsPage(false);

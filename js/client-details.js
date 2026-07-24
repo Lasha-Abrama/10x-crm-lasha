@@ -255,15 +255,7 @@ function setClientReminder() {
   }, 60000);
 }
 
-function deleteClient() {
-  const shouldDelete = confirm(
-    "Are you sure you want to delete this client?"
-  );
-
-  if (!shouldDelete) {
-    return;
-  }
-
+async function deleteClient() {
   const clients = getClients();
   const clientId = getClientIdFromUrl();
   const updatedClients = clients.filter(function (client) {
@@ -275,12 +267,24 @@ function deleteClient() {
     return;
   }
 
-  localStorage.setItem("crm_clients", JSON.stringify(updatedClients));
-  showMessage("Client deleted successfully!", "success");
+  const shouldDelete = confirm("Delete this client? This cannot be undone.");
 
-  setTimeout(function () {
-    window.location.href = "clients.html";
-  }, 1500);
+  if (!shouldDelete) {
+    return;
+  }
+
+  try {
+    await deleteClientFromApi(clientId);
+    localStorage.setItem("crm_clients", JSON.stringify(updatedClients));
+    showMessage("Client deleted", "success");
+
+    setTimeout(function () {
+      window.location.href = "clients.html";
+    }, 1500);
+  } catch (error) {
+    console.error("Could not delete client:", error);
+    showMessage("Could not delete client. Try again.", "error");
+  }
 }
 
 editClientButton.addEventListener("click", function () {

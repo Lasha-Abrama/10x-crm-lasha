@@ -151,6 +151,18 @@
         </div>
 
         <div class="form-group">
+          <label class="form-label" for="new-client-phone">Phone</label>
+          <input
+            class="form-input"
+            type="tel"
+            id="new-client-phone"
+            name="phone"
+            placeholder="Enter phone number"
+          >
+          <p class="error-message" id="new-client-phone-error"></p>
+        </div>
+
+        <div class="form-group">
           <label class="form-label" for="new-client-company">Company</label>
           <input
             class="form-input"
@@ -169,7 +181,6 @@
             name="status"
             required
           >
-            <option value="">Select a status</option>
             <option value="Lead">Lead</option>
             <option value="Contacted">Contacted</option>
             <option value="Won">Won</option>
@@ -189,6 +200,7 @@
             name="dealValue"
             placeholder="Enter deal value"
             step="any"
+            required
           >
           <p class="error-message" id="new-client-deal-value-error"></p>
         </div>

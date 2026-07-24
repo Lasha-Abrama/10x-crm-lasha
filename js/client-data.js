@@ -91,6 +91,32 @@ async function fetchClientsFromApi() {
   }
 }
 
+async function createClientInApi(clientData) {
+  const response = await fetch("https://dummyjson.com/users/add", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(clientData),
+  });
+
+  if (!response.ok) {
+    throw new Error("Failed to create client");
+  }
+
+  return response.json();
+}
+
+async function deleteClientFromApi(clientId) {
+  const response = await fetch(`https://dummyjson.com/users/${clientId}`, {
+    method: "DELETE",
+  });
+
+  if (!response.ok && response.status !== 404) {
+    throw new Error("Failed to delete client");
+  }
+}
+
 async function loadClients() {
   const storedClients = getStoredClients();
 

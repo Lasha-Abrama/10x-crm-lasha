@@ -304,7 +304,13 @@ body {
   color: var(--color-error);
 }
 
-.view-client-button {
+.table-actions {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.table-actions .btn {
+  width: auto;
   padding: 0.45rem 0.75rem;
   white-space: nowrap;
 }
