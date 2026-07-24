@@ -48,12 +48,14 @@ function renderClients(clients) {
     statusBadge.classList.add("status-badge");
     statusBadge.textContent = client.status;
 
-    if (client.status === "Active") {
-      statusBadge.classList.add("status-active");
-    } else if (client.status === "Lead") {
+    if (client.status === "Lead") {
       statusBadge.classList.add("status-lead");
-    } else if (client.status === "Inactive") {
-      statusBadge.classList.add("status-inactive");
+    } else if (client.status === "Contacted") {
+      statusBadge.classList.add("status-contacted");
+    } else if (client.status === "Won") {
+      statusBadge.classList.add("status-won");
+    } else if (client.status === "Lost") {
+      statusBadge.classList.add("status-lost");
     }
 
     statusCell.appendChild(statusBadge);

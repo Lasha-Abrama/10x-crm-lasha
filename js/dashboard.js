@@ -48,35 +48,40 @@ function displayCurrentDate() {
 function displayClientStatistics() {
   const clients = getClients();
   const totalClients = clients.length;
-  const activeClients = clients.filter(
-    (client) => client.status === "Active"
-  ).length;
-  const leadClients = clients.filter(
-    (client) => client.status === "Lead"
-  ).length;
-  const inactiveClients = clients.filter(
-    (client) => client.status === "Inactive"
-  ).length;
+  const activeDeals = clients.filter((client) => {
+    return client.status !== "Won" && client.status !== "Lost";
+  }).length;
+  const wonRevenue = clients
+    .filter((client) => client.status === "Won")
+    .reduce((total, client) => {
+      return total + (Number(client.dealValue) || 0);
+    }, 0);
+  const newThisWeek = clients.filter((client) => {
+    const daysSinceCreated =
+      (Date.now() - new Date(client.createdAt).getTime()) / 86400000;
+
+    return daysSinceCreated >= 0 && daysSinceCreated <= 7;
+  }).length;
 
   const totalClientsElement = document.querySelector("#total-clients");
-  const activeClientsElement = document.querySelector("#active-clients");
-  const leadClientsElement = document.querySelector("#lead-clients");
-  const inactiveClientsElement = document.querySelector("#inactive-clients");
+  const activeDealsElement = document.querySelector("#active-deals");
+  const wonRevenueElement = document.querySelector("#won-revenue");
+  const newThisWeekElement = document.querySelector("#new-this-week");
 
   if (totalClientsElement) {
     totalClientsElement.textContent = totalClients;
   }
 
-  if (activeClientsElement) {
-    activeClientsElement.textContent = activeClients;
+  if (activeDealsElement) {
+    activeDealsElement.textContent = activeDeals;
   }
 
-  if (leadClientsElement) {
-    leadClientsElement.textContent = leadClients;
+  if (wonRevenueElement) {
+    wonRevenueElement.textContent = `$${wonRevenue.toLocaleString()}`;
   }
 
-  if (inactiveClientsElement) {
-    inactiveClientsElement.textContent = inactiveClients;
+  if (newThisWeekElement) {
+    newThisWeekElement.textContent = newThisWeek;
   }
 }
 

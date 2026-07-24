@@ -283,15 +283,19 @@ body {
   border-radius: 999px;
 }
 
-.status-active {
-  color: var(--color-success);
-}
-
 .status-lead {
   color: var(--color-accent);
 }
 
-.status-inactive {
+.status-contacted {
+  color: var(--color-text-muted);
+}
+
+.status-won {
+  color: var(--color-success);
+}
+
+.status-lost {
   color: var(--color-error);
 }
 
