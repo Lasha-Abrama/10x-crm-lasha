@@ -1,6 +1,7 @@
 const clientsTable = document.querySelector(".clients-table");
 const clientsTableBody = document.querySelector("#clients-table-body");
 const clientsEmptyMessage = document.querySelector("#clients-empty-message");
+const clientsLoadState = document.querySelector("#clients-load-state");
 const clientSearchInput = document.getElementById("client-search");
 const statusFilter = document.getElementById("status-filter");
 const sortClientsSelect = document.getElementById("sort-clients");
@@ -25,33 +26,73 @@ const newClientDealValueError = document.getElementById(
   "new-client-deal-value-error"
 );
 const validClientStatuses = ["Lead", "Contacted", "Won", "Lost"];
+const clients = [];
+let clientsReady = false;
 
-function getClients() {
-  const savedClients = localStorage.getItem("crm_clients");
+function showClientsLoading() {
+  clientsReady = false;
+  clientsTableBody.textContent = "";
+  clientsTable.classList.add("hidden");
+  clientsEmptyMessage.classList.remove("visible");
+  clientsLoadState.textContent = "";
+  clientsLoadState.classList.remove("hidden");
+  addClientButton.disabled = true;
 
-  if (savedClients) {
-    return JSON.parse(savedClients);
-  }
-
-  return [];
+  const loadingMessage = document.createElement("p");
+  loadingMessage.textContent = "Loading clients...";
+  clientsLoadState.appendChild(loadingMessage);
 }
 
-const clients = getClients();
+function showClientsError() {
+  clientsReady = false;
+  clients.length = 0;
+  clientsTableBody.textContent = "";
+  clientsTable.classList.add("hidden");
+  clientsEmptyMessage.classList.remove("visible");
+  clientsLoadState.textContent = "";
+  clientsLoadState.classList.remove("hidden");
+  addClientButton.disabled = true;
 
-async function loadClients() {
-  if (localStorage.getItem("crm_clients") === null) {
-    try {
-      const fetchedClients = await fetchClientsFromApi();
+  const errorMessage = document.createElement("p");
+  const retryButton = document.createElement("button");
 
-      fetchedClients.forEach(function (client) {
-        clients.push(client);
-      });
-    } catch (error) {
-      console.error("Failed to load clients:", error);
-    }
+  errorMessage.textContent =
+    "Could not load clients. Check your connection and try again.";
+  retryButton.type = "button";
+  retryButton.id = "retry-clients-button";
+  retryButton.classList.add("btn", "btn-primary");
+  retryButton.textContent = "Retry";
+  retryButton.addEventListener("click", function () {
+    loadClientsPage(true);
+  });
+
+  clientsLoadState.appendChild(errorMessage);
+  clientsLoadState.appendChild(retryButton);
+}
+
+async function loadClientsPage(forceFreshRequest) {
+  showClientsLoading();
+
+  try {
+    const loadedClients = forceFreshRequest
+      ? await fetchClientsFromApi()
+      : await loadClients();
+
+    clients.length = 0;
+
+    loadedClients.forEach(function (client) {
+      clients.push(client);
+    });
+
+    clientsReady = true;
+    clientsLoadState.textContent = "";
+    clientsLoadState.classList.add("hidden");
+    addClientButton.disabled = false;
+    applyClientFilters();
+  } catch (error) {
+    console.error("Could not load clients:", error);
+    showClientsError();
   }
-
-  applyClientFilters();
 }
 
 function clearAddClientErrors() {
@@ -230,6 +271,10 @@ function renderClients(clients) {
 }
 
 function applyClientFilters() {
+  if (!clientsReady) {
+    return;
+  }
+
   const searchText = clientSearchInput.value.trim().toLowerCase();
   const selectedStatus = statusFilter.value;
   const selectedSort = sortClientsSelect.value;
@@ -300,7 +345,7 @@ addClientForm.addEventListener("submit", function (event) {
     return;
   }
 
-  const currentClients = getClients();
+  const currentClients = getStoredClients() || [];
   const email = newClientEmailInput.value.trim().toLowerCase();
   const emailExists = currentClients.some(function (client) {
     const savedEmail = (client.email || "").trim().toLowerCase();
@@ -344,4 +389,4 @@ addClientForm.addEventListener("submit", function (event) {
   showMessage("Client added successfully!", "success");
 });
 
-loadClients();
+loadClientsPage(false);

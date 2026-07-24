@@ -8,15 +8,8 @@ function getSession() {
   return null;
 }
 
-function getClients() {
-  const savedClients = localStorage.getItem("crm_clients");
-
-  if (savedClients) {
-    return JSON.parse(savedClients);
-  }
-
-  return [];
-}
+const statsGrid = document.querySelector(".stats-grid");
+const dashboardClientState = document.querySelector("#dashboard-client-state");
 
 function displayUserName() {
   const session = getSession();
@@ -45,8 +38,7 @@ function displayCurrentDate() {
   );
 }
 
-function displayClientStatistics() {
-  const clients = getClients();
+function displayClientStatistics(clients) {
   const totalClients = clients.length;
   const activeDeals = clients.filter((client) => {
     return client.status !== "Won" && client.status !== "Lost";
@@ -85,18 +77,50 @@ function displayClientStatistics() {
   }
 }
 
-async function loadClientStatistics() {
-  if (localStorage.getItem("crm_clients") === null) {
-    try {
-      await fetchClientsFromApi();
-    } catch (error) {
-      console.error("Failed to load client statistics:", error);
-    }
-  }
+function showDashboardLoading() {
+  statsGrid.classList.add("hidden");
+  dashboardClientState.textContent = "Loading clients...";
+  dashboardClientState.classList.remove("hidden");
+}
 
-  displayClientStatistics();
+function showDashboardError() {
+  dashboardClientState.textContent = "";
+  dashboardClientState.classList.remove("hidden");
+  statsGrid.classList.add("hidden");
+
+  const errorMessage = document.createElement("p");
+  const retryButton = document.createElement("button");
+
+  errorMessage.textContent = "Could not load client statistics.";
+  retryButton.type = "button";
+  retryButton.classList.add("btn", "btn-primary");
+  retryButton.textContent = "Retry";
+  retryButton.addEventListener("click", function () {
+    loadClientStatistics(true);
+  });
+
+  dashboardClientState.appendChild(errorMessage);
+  dashboardClientState.appendChild(retryButton);
+}
+
+async function loadClientStatistics(forceFreshRequest) {
+  showDashboardLoading();
+
+  try {
+    const clients = forceFreshRequest
+      ? await fetchClientsFromApi()
+      : await loadClients();
+
+    dashboardClientState.textContent = "";
+    dashboardClientState.classList.add("hidden");
+    statsGrid.classList.remove("hidden");
+    displayClientStatistics(clients);
+  } catch (error) {
+    console.error("Could not load client statistics:", error);
+    showDashboardError();
+  }
 }
 
 displayUserName();
 displayCurrentDate();
-loadClientStatistics();
+loadClientStatistics(false);
