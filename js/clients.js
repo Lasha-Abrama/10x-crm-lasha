@@ -77,13 +77,13 @@ function applyClientFilters() {
   const searchText = clientSearchInput.value.trim().toLowerCase();
   const selectedStatus = statusFilter.value;
   const filteredClients = clients.filter(function (client) {
-    const fullName = client.fullName.toLowerCase();
-    const email = client.email.toLowerCase();
-    const company = client.company || "";
+    const fullName = (client.fullName || "").toLowerCase();
+    const email = (client.email || "").toLowerCase();
+    const company = (client.company || "").toLowerCase();
     const matchesSearch =
       fullName.startsWith(searchText) ||
       email.startsWith(searchText) ||
-      company.toLowerCase().startsWith(searchText);
+      company.startsWith(searchText);
     const matchesStatus =
       selectedStatus === "all" || client.status === selectedStatus;
 
