@@ -4,6 +4,27 @@ const clientsEmptyMessage = document.querySelector("#clients-empty-message");
 const clientSearchInput = document.getElementById("client-search");
 const statusFilter = document.getElementById("status-filter");
 const sortClientsSelect = document.getElementById("sort-clients");
+const addClientButton = document.getElementById("add-client-button");
+const addClientModal = document.getElementById("add-client-modal");
+const closeClientModalButton = document.getElementById("close-client-modal");
+const cancelAddClientButton = document.getElementById("cancel-add-client");
+const addClientForm = document.getElementById("add-client-form");
+const newClientNameInput = document.getElementById("new-client-name");
+const newClientEmailInput = document.getElementById("new-client-email");
+const newClientCompanyInput = document.getElementById("new-client-company");
+const newClientStatusInput = document.getElementById("new-client-status");
+const newClientDealValueInput = document.getElementById(
+  "new-client-deal-value"
+);
+const newClientNameError = document.getElementById("new-client-name-error");
+const newClientEmailError = document.getElementById("new-client-email-error");
+const newClientStatusError = document.getElementById(
+  "new-client-status-error"
+);
+const newClientDealValueError = document.getElementById(
+  "new-client-deal-value-error"
+);
+const validClientStatuses = ["Lead", "Contacted", "Won", "Lost"];
 
 function getClients() {
   const savedClients = localStorage.getItem("crm_clients");
@@ -16,6 +37,112 @@ function getClients() {
 }
 
 const clients = getClients();
+
+function clearAddClientErrors() {
+  const formFields = addClientForm.querySelectorAll(
+    ".form-input, .form-select"
+  );
+  const errorMessages = addClientForm.querySelectorAll(".error-message");
+
+  formFields.forEach(function (field) {
+    field.classList.remove("input-error");
+  });
+
+  errorMessages.forEach(function (errorMessage) {
+    errorMessage.textContent = "";
+  });
+}
+
+function showAddClientError(input, errorElement, message) {
+  input.classList.add("input-error");
+  errorElement.textContent = message;
+}
+
+function openAddClientModal() {
+  addClientForm.reset();
+  clearAddClientErrors();
+  addClientModal.classList.remove("hidden");
+  newClientNameInput.focus();
+}
+
+function closeAddClientModal() {
+  addClientModal.classList.add("hidden");
+  addClientForm.reset();
+  clearAddClientErrors();
+}
+
+function validateAddClientForm() {
+  let isValid = true;
+  const fullName = newClientNameInput.value.trim();
+  const email = newClientEmailInput.value.trim().toLowerCase();
+  const status = newClientStatusInput.value;
+  const dealValueText = newClientDealValueInput.value.trim();
+
+  if (fullName.length < 3) {
+    showAddClientError(
+      newClientNameInput,
+      newClientNameError,
+      "Full name must be at least 3 characters"
+    );
+    isValid = false;
+  }
+
+  const atPosition = email.indexOf("@");
+  const dotAfterAt = email.indexOf(".", atPosition + 1);
+
+  if (email === "" || atPosition === -1 || dotAfterAt === -1) {
+    showAddClientError(
+      newClientEmailInput,
+      newClientEmailError,
+      "Please enter a valid email address"
+    );
+    isValid = false;
+  }
+
+  if (!validClientStatuses.includes(status)) {
+    showAddClientError(
+      newClientStatusInput,
+      newClientStatusError,
+      "Please select a valid status"
+    );
+    isValid = false;
+  }
+
+  if (dealValueText !== "") {
+    const dealValue = Number(dealValueText);
+
+    if (Number.isNaN(dealValue) || dealValue < 0) {
+      showAddClientError(
+        newClientDealValueInput,
+        newClientDealValueError,
+        "Deal value must be 0 or greater"
+      );
+      isValid = false;
+    }
+  }
+
+  return isValid;
+}
+
+function showMessage(message, type) {
+  const toastContainer = document.querySelector(".toast-container");
+  const toast = document.createElement("div");
+
+  toast.classList.add("toast");
+
+  if (type === "success") {
+    toast.classList.add("toast-success");
+  } else {
+    toast.classList.add("toast-error");
+  }
+
+  toast.textContent = message;
+  toastContainer.appendChild(toast);
+
+  setTimeout(function () {
+    toast.remove();
+  }, 3000);
+}
 
 function renderClients(clients) {
   clientsTableBody.innerHTML = "";
@@ -144,5 +271,61 @@ if (clientSearchInput && statusFilter && sortClientsSelect) {
   statusFilter.addEventListener("change", applyClientFilters);
   sortClientsSelect.addEventListener("change", applyClientFilters);
 }
+
+addClientButton.addEventListener("click", openAddClientModal);
+closeClientModalButton.addEventListener("click", closeAddClientModal);
+cancelAddClientButton.addEventListener("click", closeAddClientModal);
+
+addClientForm.addEventListener("submit", function (event) {
+  event.preventDefault();
+  clearAddClientErrors();
+
+  if (!validateAddClientForm()) {
+    return;
+  }
+
+  const currentClients = getClients();
+  const email = newClientEmailInput.value.trim().toLowerCase();
+  const emailExists = currentClients.some(function (client) {
+    const savedEmail = (client.email || "").trim().toLowerCase();
+
+    return savedEmail === email;
+  });
+
+  if (emailExists) {
+    showAddClientError(
+      newClientEmailInput,
+      newClientEmailError,
+      "A client with this email already exists"
+    );
+    return;
+  }
+
+  const newClient = {
+    id: Date.now(),
+    fullName: newClientNameInput.value.trim(),
+    email: newClientEmailInput.value.trim().toLowerCase(),
+    company: newClientCompanyInput.value.trim(),
+    status: newClientStatusInput.value,
+    dealValue: newClientDealValueInput.value
+      ? Number(newClientDealValueInput.value)
+      : 0,
+    notes: [],
+    createdAt: new Date().toISOString()
+  };
+
+  clients.length = 0;
+
+  currentClients.forEach(function (client) {
+    clients.push(client);
+  });
+
+  clients.push(newClient);
+  localStorage.setItem("crm_clients", JSON.stringify(clients));
+
+  closeAddClientModal();
+  applyClientFilters();
+  showMessage("Client added successfully!", "success");
+});
 
 applyClientFilters();
