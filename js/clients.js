@@ -130,16 +130,16 @@ function closeAddClientModal() {
 
 function validateAddClientForm() {
   let isValid = true;
-  const fullName = newClientNameInput.value.trim();
+  const name = newClientNameInput.value.trim();
   const email = newClientEmailInput.value.trim().toLowerCase();
   const status = newClientStatusInput.value;
   const dealValueText = newClientDealValueInput.value.trim();
 
-  if (fullName.length < 3) {
+  if (name.length < 3) {
     showAddClientError(
       newClientNameInput,
       newClientNameError,
-      "Full name must be at least 3 characters"
+      "Name must be at least 3 characters"
     );
     isValid = false;
   }
@@ -224,7 +224,7 @@ function renderClients(clients) {
     const statusBadge = document.createElement("span");
     const viewButton = document.createElement("button");
 
-    nameCell.textContent = client.fullName;
+    nameCell.textContent = client.name;
     emailCell.textContent = client.email;
     companyCell.textContent = client.company || "—";
     createdCell.textContent = new Date(client.createdAt).toLocaleDateString();
@@ -279,11 +279,11 @@ function applyClientFilters() {
   const selectedStatus = statusFilter.value;
   const selectedSort = sortClientsSelect.value;
   const filteredClients = clients.filter(function (client) {
-    const fullName = (client.fullName || "").toLowerCase();
+    const name = (client.name || "").toLowerCase();
     const email = (client.email || "").toLowerCase();
     const company = (client.company || "").toLowerCase();
     const matchesSearch =
-      fullName.startsWith(searchText) ||
+      name.startsWith(searchText) ||
       email.startsWith(searchText) ||
       company.startsWith(searchText);
     const matchesStatus =
@@ -310,15 +310,15 @@ function applyClientFilters() {
     });
   } else if (selectedSort === "name-asc") {
     sortedClients.sort(function (firstClient, secondClient) {
-      const firstName = firstClient.fullName || "";
-      const secondName = secondClient.fullName || "";
+      const firstName = firstClient.name || "";
+      const secondName = secondClient.name || "";
 
       return firstName.localeCompare(secondName);
     });
   } else if (selectedSort === "name-desc") {
     sortedClients.sort(function (firstClient, secondClient) {
-      const firstName = firstClient.fullName || "";
-      const secondName = secondClient.fullName || "";
+      const firstName = firstClient.name || "";
+      const secondName = secondClient.name || "";
 
       return secondName.localeCompare(firstName);
     });
@@ -364,13 +364,15 @@ addClientForm.addEventListener("submit", function (event) {
 
   const newClient = {
     id: Date.now(),
-    fullName: newClientNameInput.value.trim(),
+    name: newClientNameInput.value.trim(),
     email: newClientEmailInput.value.trim().toLowerCase(),
+    phone: "",
     company: newClientCompanyInput.value.trim(),
+    image: "",
     status: newClientStatusInput.value,
     dealValue: newClientDealValueInput.value
       ? Number(newClientDealValueInput.value)
-      : 0,
+      : 1000,
     notes: [],
     createdAt: new Date().toISOString()
   };

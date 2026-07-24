@@ -1,3 +1,21 @@
+function normalizeStoredClient(client) {
+  const savedDealValue = Number(client.dealValue);
+  const validStatuses = ["Lead", "Contacted", "Won", "Lost"];
+
+  return {
+    id: client.id,
+    name: client.name || client.fullName || "",
+    email: (client.email || "").trim().toLowerCase(),
+    phone: client.phone || "",
+    company: client.company || "",
+    image: client.image || "",
+    status: validStatuses.includes(client.status) ? client.status : "Lead",
+    dealValue: savedDealValue > 0 ? savedDealValue : 1000,
+    notes: Array.isArray(client.notes) ? client.notes : [],
+    createdAt: client.createdAt || new Date().toISOString(),
+  };
+}
+
 function getStoredClients() {
   const savedClients = localStorage.getItem("crm_clients");
 
@@ -12,7 +30,22 @@ function getStoredClients() {
       throw new Error("Stored client data is not an array");
     }
 
-    return clients;
+    const containsInvalidClient = clients.some(function (client) {
+      return !client || typeof client !== "object";
+    });
+
+    if (containsInvalidClient) {
+      throw new Error("Stored client data contains an invalid client");
+    }
+
+    const normalizedClients = clients.map(normalizeStoredClient);
+    const normalizedClientsJson = JSON.stringify(normalizedClients);
+
+    if (normalizedClientsJson !== savedClients) {
+      localStorage.setItem("crm_clients", normalizedClientsJson);
+    }
+
+    return normalizedClients;
   } catch (error) {
     console.error("Failed to read stored clients:", error);
     localStorage.removeItem("crm_clients");
@@ -37,13 +70,13 @@ async function fetchClientsFromApi() {
     const clients = data.users.map(function (apiUser) {
       return {
         id: apiUser.id,
-        fullName: `${apiUser.firstName} ${apiUser.lastName}`.trim(),
+        name: `${apiUser.firstName} ${apiUser.lastName}`.trim(),
         email: (apiUser.email || "").trim().toLowerCase(),
         phone: apiUser.phone || "",
         company: apiUser.company ? apiUser.company.name : "",
         image: apiUser.image || "",
         status: "Lead",
-        dealValue: 0,
+        dealValue: 1000,
         notes: [],
         createdAt: new Date().toISOString(),
       };

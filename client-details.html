@@ -42,7 +42,7 @@
     <section id="client-details-content">
       <dl class="card client-details-card">
         <div class="form-group">
-          <dt class="form-label">Full Name</dt>
+          <dt class="form-label">Name</dt>
           <dd id="client-name"></dd>
         </div>
 
@@ -129,13 +129,13 @@
     <!-- Edit Client Form -->
     <form id="edit-client-form" class="card client-details-card hidden" novalidate>
       <div class="form-group">
-        <label class="form-label" for="edit-client-name">Full Name</label>
+        <label class="form-label" for="edit-client-name">Name</label>
         <input
           class="form-input"
           type="text"
           id="edit-client-name"
-          name="fullName"
-          placeholder="Enter full name"
+          name="name"
+          placeholder="Enter client name"
           required
         >
         <p class="error-message"></p>
@@ -216,6 +216,7 @@
 
   <script src="js/guard.js"></script>
   <script src="js/common.js"></script>
+  <script src="js/client-data.js"></script>
   <script src="js/client-details.js"></script>
 </body>
 </html>

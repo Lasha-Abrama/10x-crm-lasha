@@ -31,13 +31,7 @@ function getClientIdFromUrl() {
 }
 
 function getClients() {
-  const savedClients = localStorage.getItem("crm_clients");
-
-  if (savedClients) {
-    return JSON.parse(savedClients);
-  }
-
-  return [];
+  return getStoredClients() || [];
 }
 
 function getClientById() {
@@ -50,7 +44,7 @@ function getClientById() {
 }
 
 function populateEditForm(client) {
-  editClientNameInput.value = client.fullName || "";
+  editClientNameInput.value = client.name || "";
   editClientEmailInput.value = client.email || "";
   editClientCompanyInput.value = client.company || "";
   editClientStatusInput.value = client.status || "";
@@ -84,7 +78,7 @@ function showEditError(input, errorElement, message) {
 
 function validateEditForm() {
   let isValid = true;
-  const fullName = editClientNameInput.value.trim();
+  const name = editClientNameInput.value.trim();
   const email = editClientEmailInput.value.trim().toLowerCase();
   const status = editClientStatusInput.value;
   const dealValueText = editClientDealValueInput.value.trim();
@@ -101,18 +95,18 @@ function validateEditForm() {
     ".error-message"
   );
 
-  if (fullName === "") {
+  if (name === "") {
     showEditError(
       editClientNameInput,
       nameError,
-      "Full name is required."
+      "Name is required."
     );
     isValid = false;
-  } else if (fullName.length < 3) {
+  } else if (name.length < 3) {
     showEditError(
       editClientNameInput,
       nameError,
-      "Full name must be at least 3 characters."
+      "Name must be at least 3 characters."
     );
     isValid = false;
   }
@@ -232,7 +226,7 @@ function displayClientDetails() {
   clientDetailsContent.classList.remove("hidden");
   editClientForm.classList.add("hidden");
   clientNotFoundMessage.classList.remove("visible");
-  clientNameElement.textContent = client.fullName;
+  clientNameElement.textContent = client.name;
   clientEmailElement.textContent = client.email;
   clientCompanyElement.textContent = client.company || "—";
   clientStatusElement.textContent = client.status;
@@ -252,7 +246,7 @@ function setClientReminder() {
     return;
   }
 
-  const clientName = client.fullName;
+  const clientName = client.name;
 
   showMessage("Reminder set ✓", "success");
 
@@ -383,7 +377,7 @@ editClientForm.addEventListener("submit", function (event) {
 
   const dealValueText = editClientDealValueInput.value.trim();
 
-  clients[clientIndex].fullName = editClientNameInput.value.trim();
+  clients[clientIndex].name = editClientNameInput.value.trim();
   clients[clientIndex].email = editClientEmailInput.value.trim().toLowerCase();
   clients[clientIndex].company = editClientCompanyInput.value.trim();
   clients[clientIndex].status = editClientStatusInput.value;
