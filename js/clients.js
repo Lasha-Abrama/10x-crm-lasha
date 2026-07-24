@@ -444,7 +444,9 @@ function getVisibleClients() {
   const selectedSort = sortClientsSelect.value;
   const filteredClients = clients.filter(function (client) {
     const name = (client.name || "").toLowerCase();
-    const matchesSearch = name.startsWith(searchText);
+    const company = (client.company || "").toLowerCase();
+    const matchesSearch =
+      name.includes(searchText) || company.includes(searchText);
     const matchesStatus =
       selectedStatus === "all" || client.status === selectedStatus;
 

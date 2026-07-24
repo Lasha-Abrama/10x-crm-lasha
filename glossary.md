@@ -59,3 +59,33 @@
 **English:** Deployment is the process of publishing an application so other people can access it online.
 
 **ქართული:** deployment არის აპლიკაციის ინტერნეტში გამოქვეყნების პროცესი, რათა მასზე სხვა მომხმარებლებსაც ჰქონდეთ წვდომა.
+
+## 11. LocalStorage
+
+**English:** LocalStorage is browser storage that keeps string data after the page is refreshed or the browser is reopened.
+
+**ქართული:** LocalStorage არის ბრაუზერის საცავი, რომელიც ტექსტურ მონაცემებს გვერდის განახლებისა და ბრაუზერის ხელახლა გახსნის შემდეგაც ინარჩუნებს.
+
+## 12. DOM
+
+**English:** The Document Object Model represents an HTML page as objects that JavaScript can read and update.
+
+**ქართული:** Document Object Model HTML გვერდს ობიექტების სახით წარმოადგენს, რომელთა წაკითხვა და შეცვლა JavaScript-ს შეუძლია.
+
+## 13. Promise
+
+**English:** A Promise represents the future result of an asynchronous operation, such as an API request.
+
+**ქართული:** Promise წარმოადგენს ასინქრონული მოქმედების მომავალ შედეგს, მაგალითად API მოთხოვნის პასუხს.
+
+## 14. Async/Await
+
+**English:** `async` and `await` provide a readable way to run asynchronous operations and wait for their results.
+
+**ქართული:** `async` და `await` ასინქრონული მოქმედებების გაშვებისა და მათი შედეგების დალოდების გასაგები საშუალებაა.
+
+## 15. Error Handling
+
+**English:** Error handling uses logic such as `try...catch` to respond safely when an operation fails.
+
+**ქართული:** შეცდომების დამუშავება იყენებს `try...catch`-ის მსგავს ლოგიკას, რათა წარუმატებელი მოქმედება უსაფრთხოდ დამუშავდეს.

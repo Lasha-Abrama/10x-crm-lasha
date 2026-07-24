@@ -10,9 +10,7 @@
 - `Promise`
 - `Response`
 - `response.ok`
-- `response.json()`
-- `async`
-- `await`
+- `async` / `await`
 - `try...catch`
 
 ## ქართული რეზიუმე

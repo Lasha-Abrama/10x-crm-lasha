@@ -9,14 +9,15 @@
 - **Authentication:** Sign Up and Login forms with validation, duplicate-email checks, browser-based sessions, protected pages, and Logout.
 - **Dashboard:** Personalized greeting, live date and time, client statistics, pipeline totals, and the five newest clients.
 - **Client management:** Add, view, edit, and delete clients.
-- **Search:** Find clients by their saved information while typing.
+- **Search:** Find clients by name or company while typing.
 - **Filtering:** Filter clients by Lead, Contacted, Won, or Lost status.
-- **Sorting:** Sort clients by newest date, name, or highest deal value.
+- **Sorting:** Sort clients by date, name, or deal value in either direction.
 - **Client details:** Review a selected client's avatar, contact information, status, deal value, and account date.
 - **Notes:** Add dated notes to a selected client.
 - **Reminder:** Schedule a one-minute follow-up toast for a client during the current page session.
 - **Profile:** View account details, update name and company, change the password, and reset CRM client data.
-- **Theme switching:** Switch between light and dark themes and keep the selected theme between pages.
+- **Theme switching:** Switch between light and dark themes and keep the selected theme on every page.
+- **10X Mode:** Use the hidden Shift-click logo interaction to toggle a persistent neon theme.
 - **LocalStorage persistence:** Keep users, the current session, clients, and theme preferences in the browser.
 - **Error handling and Retry:** Show loading and error states and retry a failed client API request.
 
@@ -38,6 +39,10 @@
 5. Create an account on the Sign Up page, then log in to access the protected CRM pages.
 
 A local server is recommended because the application uses the Fetch API to load initial client data.
+
+## Live Demo
+
+[Open the deployed 10X CRM application](https://10x-crm-lasha.vercel.app/)
 
 ## Test Account
 
@@ -64,8 +69,7 @@ No fixed test account is required. Open the Sign Up page to create an account, t
 │   ├── guard.js            # Authentication guard
 │   ├── login.js            # Login validation and session creation
 │   ├── profile.js          # Profile and password behaviour
-│   ├── signup.js           # Sign Up validation and user creation
-│   └── storage.js          # Shared storage helper placeholder
+│   └── signup.js           # Sign Up validation and user creation
 ├── ai-log.md               # AI usage and development reflection
 ├── glossary.md             # Project terminology
 ├── research-note.md        # Project research notes
@@ -80,6 +84,7 @@ The application uses LocalStorage for browser-based persistence:
 - `crm_session` stores the currently logged-in user's session.
 - `crm_clients` stores client records and their notes.
 - `crm_theme` stores the selected light or dark theme.
+- `crm_ten_x_mode` stores whether the hidden neon theme is active.
 
 This data belongs only to the current browser and device. Because this is a frontend-only educational project, its LocalStorage authentication and plain-text passwords are not suitable for a production application.
 

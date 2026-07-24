@@ -10,7 +10,7 @@ function getSavedTheme() {
     return savedTheme;
   }
 
-  return "light";
+  return "dark";
 }
 
 function applyTheme(theme) {

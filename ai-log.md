@@ -123,10 +123,10 @@ ChatGPT and Codex
 > Combine search and status filtering, then sort a copied result by date or name. Search should update while typing and handle missing fields safely.
 
 **Result:**
-The response was modified during debugging and the final PRD audit. Safe fallback strings prevent missing fields from causing `.toLowerCase()` errors. Search uses `includes()`, status filter chips combine with the query, and the three final sorts are Newest First, Name A–Z, and Deal Value High–Low.
+The response was modified during debugging and the final PRD audit. Safe fallback strings prevent missing fields from causing `.toLowerCase()` errors. Search uses `includes()` across client names and companies, status filter chips combine with the query, and sorting supports newest, oldest, name in both directions, and deal value in both directions.
 
 **What changed and what I learned:**
-I learned how `filter()` creates matching subsets, `includes()` checks text anywhere in a field, and `localeCompare()` orders names. Copying with `[...filteredClients]` prevents `sort()` from changing the original array.
+I learned how `filter()` creates matching subsets, `includes()` checks text anywhere in a field, and `localeCompare()` orders names. Copying with `[...filteredClients]` prevents `sort()` from changing the original array, while numeric comparisons order dates and deal values.
 
 ### Entry 8 — API Client Loading and Retry
 
@@ -140,7 +140,7 @@ Codex
 > Use one shared async loader, check `response.ok`, transform `data.users` with `map()`, handle invalid stored JSON, and let Retry make a fresh request.
 
 **Result:**
-The response was used after both success and failure testing. The API URL was temporarily made invalid to confirm the exact error message and Retry button, then restored. API users are now transformed consistently into the PRD client model with the `name` property.
+The response was used after both success and failure testing. The API URL was temporarily made invalid to confirm the exact error message and Retry button, then restored. API users are transformed consistently into the PRD client model with the `name` property and a generated deal value between 1,000 and 10,000.
 
 **What changed and what I learned:**
 I learned how `async/await` makes request steps readable, how `try/catch` handles rejected requests, why HTTP failures require an explicit `response.ok` check, and how `map()` transforms external data into the application’s own object shape.

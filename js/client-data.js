@@ -76,7 +76,7 @@ async function fetchClientsFromApi() {
         company: apiUser.company ? apiUser.company.name : "",
         image: apiUser.image || "",
         status: "Lead",
-        dealValue: 1000,
+        dealValue: Math.floor(Math.random() * 9001) + 1000,
         notes: [],
         createdAt: new Date().toISOString(),
       };
