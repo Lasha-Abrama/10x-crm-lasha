@@ -8,6 +8,48 @@
   <script src="js/login.js" defer></script>
 </head>
 <body>
-  <h1>10X CRM Login</h1>
+  <main class="container auth-layout">
+    <!-- Login Card -->
+    <section class="card auth-card">
+      <h1 class="page-title">Welcome back</h1>
+
+      <!-- Login Form -->
+      <form>
+        <div class="form-group">
+          <label class="form-label" for="email">Email</label>
+          <input
+            class="form-input"
+            type="email"
+            id="email"
+            name="email"
+            placeholder="Enter your email"
+            required
+          >
+          <p class="error-message"></p>
+        </div>
+
+        <div class="form-group">
+          <label class="form-label" for="password">Password</label>
+          <input
+            class="form-input"
+            type="password"
+            id="password"
+            name="password"
+            placeholder="Enter your password"
+            required
+          >
+          <p class="error-message"></p>
+        </div>
+
+        <button class="btn btn-primary" type="button">Log In</button>
+      </form>
+
+      <!-- Sign Up Link -->
+      <p class="auth-footer text-muted">
+        Don't have an account?
+        <a class="auth-link" href="signup.html">Sign up</a>
+      </p>
+    </section>
+  </main>
 </body>
 </html>
