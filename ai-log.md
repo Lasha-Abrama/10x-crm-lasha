@@ -213,6 +213,23 @@ The response was modified to match the PRD exactly. Profile updates change only 
 **What changed and what I learned:**
 I learned how session identifiers connect stored records and how `findIndex()` targets one account without replacing unrelated data. I also learned that plain-text passwords are unsafe in real applications and must be hashed securely on a server.
 
+### Entry 13 — Client Data Transfer and Demo Access
+
+**Goal:**
+Transfer client progress between localhost and the deployed website, provide a working demo account, and correct older API clients that all had the same deal value.
+
+**Tool:**
+Codex
+
+**Prompt:**
+> Add client JSON export and import, document a demo email and password, and verify the PRD rule for generated deal values.
+
+**Result:**
+The Profile page now exports and imports only the `crm_clients` array, so accounts and themes are not overwritten. A built-in demo account provides immediate access, and a one-time migration gives older DummyJSON clients varied deal values between 1,000 and 10,000.
+
+**What changed and what I learned:**
+I learned that localStorage is isolated by origin, so localhost and Vercel cannot share data automatically. A JSON file provides a simple frontend-only transfer method, while a migration flag prevents old default values from being changed repeatedly.
+
 ## Prompt Improvement Example
 
 ### Initial Prompt

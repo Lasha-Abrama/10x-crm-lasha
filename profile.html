@@ -138,19 +138,44 @@
             <div>
               <h2>CRM Data</h2>
               <p class="text-muted">
-                Reset the client database and restore the original clients from
-                the API.
+                Transfer client data between browsers or restore the original
+                clients from the API.
               </p>
             </div>
           </div>
 
-          <button
-            type="button"
-            id="reset-crm-data-button"
-            class="btn btn-danger"
+          <div class="profile-data-actions">
+            <button
+              type="button"
+              id="export-clients-button"
+              class="btn btn-secondary"
+            >
+              Export Clients
+            </button>
+
+            <button
+              type="button"
+              id="import-clients-button"
+              class="btn btn-secondary"
+            >
+              Import Clients
+            </button>
+
+            <button
+              type="button"
+              id="reset-crm-data-button"
+              class="btn btn-danger"
+            >
+              Reset CRM Data
+            </button>
+          </div>
+
+          <input
+            type="file"
+            id="import-clients-file"
+            class="hidden"
+            accept=".json,application/json"
           >
-            Reset CRM Data
-          </button>
         </section>
       </div>
 

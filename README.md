@@ -9,6 +9,7 @@
 - **Authentication:** Sign Up and Login forms with validation, duplicate-email checks, browser-based sessions, protected pages, and Logout.
 - **Dashboard:** Personalized greeting, live date and time, client statistics, pipeline totals, and the five newest clients.
 - **Client management:** Add, view, edit, and delete clients.
+- **Data transfer:** Export and import client JSON files between browsers or deployments.
 - **Search:** Find clients by name or company while typing.
 - **Filtering:** Filter clients by Lead, Contacted, Won, or Lost status.
 - **Sorting:** Sort clients by date, name, or deal value in either direction.
@@ -46,7 +47,14 @@ A local server is recommended because the application uses the Fetch API to load
 
 ## Test Account
 
-No fixed test account is required. Open the Sign Up page to create an account, then use the same email and password on the Login page.
+Use this built-in account to review the application immediately:
+
+```text
+Email: demo@test.com
+Password: demo1234
+```
+
+You can also create a separate account from the Sign Up page.
 
 ## Project Structure
 
@@ -86,8 +94,17 @@ The application uses LocalStorage for browser-based persistence:
 - `crm_clients` stores client records and their notes.
 - `crm_theme` stores the selected light or dark theme.
 - `crm_ten_x_mode` stores whether the hidden neon theme is active.
+- `crm_deal_values_migrated` records completion of the legacy deal-value update.
 
 This data belongs only to the current browser and device. Because this is a frontend-only educational project, its LocalStorage authentication and plain-text passwords are not suitable for a production application.
+
+## Client Data Transfer
+
+Open the Profile page and use **Export Clients** to download the current
+`crm_clients` array as a JSON file. Open the other version of the application,
+choose **Import Clients**, and select that file. Importing replaces the client
+array on that browser origin, while accounts, sessions, and themes remain
+unchanged.
 
 ## API
 

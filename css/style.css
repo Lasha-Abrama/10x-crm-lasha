@@ -1319,6 +1319,12 @@ img {
   flex: 0 0 auto;
 }
 
+.profile-data-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.65rem;
+}
+
 #change-password-form {
   display: flex;
   flex: 1;
@@ -1750,6 +1756,14 @@ html[data-ten-x-mode="true"] .pipeline-value {
     align-items: stretch;
     flex-direction: column;
     gap: 1rem;
+  }
+
+  .profile-data-actions {
+    flex-direction: column;
+  }
+
+  .profile-data-actions .btn {
+    width: 100%;
   }
 
   .stat-card {

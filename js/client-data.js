@@ -1,6 +1,15 @@
-function normalizeStoredClient(client) {
+function generateDealValue() {
+  return Math.floor(Math.random() * 9001) + 1000;
+}
+
+function normalizeStoredClient(client, migrateLegacyDealValue) {
   const savedDealValue = Number(client.dealValue);
   const validStatuses = ["Lead", "Contacted", "Won", "Lost"];
+  const isLegacyApiClient =
+    migrateLegacyDealValue &&
+    savedDealValue === 1000 &&
+    typeof client.image === "string" &&
+    client.image.includes("dummyjson.com");
 
   return {
     id: client.id,
@@ -10,7 +19,10 @@ function normalizeStoredClient(client) {
     company: client.company || "",
     image: client.image || "",
     status: validStatuses.includes(client.status) ? client.status : "Lead",
-    dealValue: savedDealValue > 0 ? savedDealValue : 1000,
+    dealValue:
+      savedDealValue > 0 && !isLegacyApiClient
+        ? savedDealValue
+        : generateDealValue(),
     notes: Array.isArray(client.notes) ? client.notes : [],
     createdAt: client.createdAt || new Date().toISOString(),
   };
@@ -38,11 +50,19 @@ function getStoredClients() {
       throw new Error("Stored client data contains an invalid client");
     }
 
-    const normalizedClients = clients.map(normalizeStoredClient);
+    const shouldMigrateDealValues =
+      localStorage.getItem("crm_deal_values_migrated") !== "true";
+    const normalizedClients = clients.map(function (client) {
+      return normalizeStoredClient(client, shouldMigrateDealValues);
+    });
     const normalizedClientsJson = JSON.stringify(normalizedClients);
 
     if (normalizedClientsJson !== savedClients) {
       localStorage.setItem("crm_clients", normalizedClientsJson);
+    }
+
+    if (shouldMigrateDealValues) {
+      localStorage.setItem("crm_deal_values_migrated", "true");
     }
 
     return normalizedClients;
@@ -76,13 +96,14 @@ async function fetchClientsFromApi() {
         company: apiUser.company ? apiUser.company.name : "",
         image: apiUser.image || "",
         status: "Lead",
-        dealValue: Math.floor(Math.random() * 9001) + 1000,
+        dealValue: generateDealValue(),
         notes: [],
         createdAt: new Date().toISOString(),
       };
     });
 
     localStorage.setItem("crm_clients", JSON.stringify(clients));
+    localStorage.setItem("crm_deal_values_migrated", "true");
 
     return clients;
   } catch (error) {

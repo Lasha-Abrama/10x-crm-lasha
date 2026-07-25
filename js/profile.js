@@ -27,6 +27,15 @@ const newPasswordError = document.querySelector("#new-password-error");
 const confirmNewPasswordError = document.querySelector(
   "#confirm-new-password-error"
 );
+const exportClientsButton = document.querySelector(
+  "#export-clients-button"
+);
+const importClientsButton = document.querySelector(
+  "#import-clients-button"
+);
+const importClientsFileInput = document.querySelector(
+  "#import-clients-file"
+);
 const resetCrmDataButton = document.querySelector("#reset-crm-data-button");
 
 function getCurrentSession() {
@@ -169,6 +178,85 @@ function clearPasswordErrors() {
 function showPasswordError(input, errorElement, message) {
   input.classList.add("input-error");
   errorElement.textContent = message;
+}
+
+function exportClients() {
+  const clients = getStoredClients();
+
+  if (clients === null) {
+    showMessage("No client data is available to export", "error");
+    return;
+  }
+
+  const fileContent = JSON.stringify(clients, null, 2);
+  const file = new Blob([fileContent], { type: "application/json" });
+  const downloadUrl = URL.createObjectURL(file);
+  const downloadLink = document.createElement("a");
+  const currentDate = new Date().toISOString().slice(0, 10);
+
+  downloadLink.href = downloadUrl;
+  downloadLink.download = `10x-crm-clients-${currentDate}.json`;
+  document.body.appendChild(downloadLink);
+  downloadLink.click();
+  downloadLink.remove();
+  URL.revokeObjectURL(downloadUrl);
+  showMessage("Clients exported successfully!", "success");
+}
+
+function importClients(event) {
+  const selectedFile = event.target.files[0];
+
+  if (!selectedFile) {
+    return;
+  }
+
+  const fileReader = new FileReader();
+
+  fileReader.addEventListener("load", function () {
+    try {
+      const importedClients = JSON.parse(fileReader.result);
+      const containsInvalidClient =
+        !Array.isArray(importedClients) ||
+        importedClients.some(function (client) {
+          return !client || typeof client !== "object";
+        });
+
+      if (containsInvalidClient) {
+        throw new Error("The selected file does not contain a client array");
+      }
+
+      const shouldImport = confirm(
+        "Importing this file will replace your current clients. Continue?"
+      );
+
+      if (!shouldImport) {
+        return;
+      }
+
+      const normalizedClients = importedClients.map(function (client) {
+        return normalizeStoredClient(client, true);
+      });
+
+      localStorage.setItem(
+        "crm_clients",
+        JSON.stringify(normalizedClients)
+      );
+      localStorage.setItem("crm_deal_values_migrated", "true");
+      showMessage("Clients imported successfully!", "success");
+    } catch (error) {
+      console.error("Could not import clients:", error);
+      showMessage("Could not import clients. Choose a valid JSON file.", "error");
+    } finally {
+      importClientsFileInput.value = "";
+    }
+  });
+
+  fileReader.addEventListener("error", function () {
+    importClientsFileInput.value = "";
+    showMessage("Could not read the selected file", "error");
+  });
+
+  fileReader.readAsText(selectedFile);
 }
 
 async function resetCrmData() {
@@ -341,6 +429,11 @@ changePasswordForm.addEventListener("submit", function (event) {
   showMessage("Password changed ✓", "success");
 });
 
+exportClientsButton.addEventListener("click", exportClients);
+importClientsButton.addEventListener("click", function () {
+  importClientsFileInput.click();
+});
+importClientsFileInput.addEventListener("change", importClients);
 resetCrmDataButton.addEventListener("click", resetCrmData);
 
 displayProfile();

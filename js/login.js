@@ -5,25 +5,42 @@ const emailErrorElement =
   emailInput.parentElement.querySelector(".error-message");
 const passwordErrorElement =
   passwordInput.parentElement.querySelector(".error-message");
+const demoUser = {
+  id: 1000000000000,
+  fullName: "Demo User",
+  email: "demo@test.com",
+  password: "demo1234",
+  company: "10X CRM",
+  createdAt: "2026-07-25T00:00:00.000Z"
+};
 
 // The page uses JavaScript validation instead of browser validation.
 loginForm.noValidate = true;
 
 function getUsers() {
   const savedUsers = localStorage.getItem("crm_users");
+  let users = [];
 
-  if (!savedUsers) {
-    return [];
+  if (savedUsers) {
+    try {
+      const parsedUsers = JSON.parse(savedUsers);
+
+      users = Array.isArray(parsedUsers) ? parsedUsers : [];
+    } catch (error) {
+      console.error("Failed to read users:", error);
+    }
   }
 
-  try {
-    const users = JSON.parse(savedUsers);
+  const demoUserExists = users.some(function (user) {
+    return (user.email || "").toLowerCase() === demoUser.email;
+  });
 
-    return Array.isArray(users) ? users : [];
-  } catch (error) {
-    console.error("Failed to read users:", error);
-    return [];
+  if (!demoUserExists) {
+    users.push(demoUser);
+    localStorage.setItem("crm_users", JSON.stringify(users));
   }
+
+  return users;
 }
 
 function clearErrors() {

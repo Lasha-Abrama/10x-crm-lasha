@@ -118,9 +118,11 @@ signupForm.addEventListener("submit", function (event) {
 
   const users = getUsers();
   const email = emailInput.value.trim().toLowerCase();
-  const emailAlreadyExists = users.some(function (user) {
-    return (user.email || "").toLowerCase() === email;
-  });
+  const emailAlreadyExists =
+    email === "demo@test.com" ||
+    users.some(function (user) {
+      return (user.email || "").toLowerCase() === email;
+    });
 
   if (emailAlreadyExists) {
     showError(emailInput, "An account with this email already exists");
