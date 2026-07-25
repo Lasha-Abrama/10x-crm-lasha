@@ -10,6 +10,7 @@ const editProfileNameInput = document.querySelector("#edit-profile-name");
 const editProfileCompanyInput = document.querySelector(
   "#edit-profile-company"
 );
+const saveProfileButton = document.querySelector("#save-profile-button");
 const profileNameError = document.querySelector("#profile-name-error");
 const cancelProfileEditButton = document.querySelector(
   "#cancel-profile-edit-button"
@@ -90,6 +91,24 @@ function displayProfile() {
 function populateProfileForm(user) {
   editProfileNameInput.value = user.fullName;
   editProfileCompanyInput.value = user.company || "";
+  saveProfileButton.disabled = true;
+}
+
+// Save is enabled only when the form differs from the stored profile.
+function updateProfileSaveButtonState() {
+  const currentUser = getCurrentUser();
+
+  if (!currentUser) {
+    saveProfileButton.disabled = true;
+    return;
+  }
+
+  const nameChanged =
+    editProfileNameInput.value.trim() !== (currentUser.fullName || "").trim();
+  const companyChanged =
+    editProfileCompanyInput.value.trim() !== (currentUser.company || "").trim();
+
+  saveProfileButton.disabled = !nameChanged && !companyChanged;
 }
 
 function clearProfileErrors() {
@@ -252,8 +271,12 @@ editProfileButton.addEventListener("click", function () {
   editProfileForm.classList.remove("hidden");
 });
 
+editProfileNameInput.addEventListener("input", updateProfileSaveButtonState);
+editProfileCompanyInput.addEventListener("input", updateProfileSaveButtonState);
+
 cancelProfileEditButton.addEventListener("click", function () {
   clearProfileErrors();
+  saveProfileButton.disabled = true;
   editProfileForm.classList.add("hidden");
   profileDetails.classList.remove("hidden");
 });
@@ -298,6 +321,7 @@ editProfileForm.addEventListener("submit", function (event) {
   editProfileForm.classList.add("hidden");
   profileDetails.classList.remove("hidden");
   clearProfileErrors();
+  saveProfileButton.disabled = true;
   showMessage("Profile updated ✓", "success");
 });
 
