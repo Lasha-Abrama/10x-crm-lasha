@@ -2,6 +2,7 @@ function generateDealValue() {
   return Math.floor(Math.random() * 9001) + 1000;
 }
 
+// Normalization gives old or imported records the current Client shape.
 function normalizeStoredClient(client, migrateLegacyDealValue) {
   const savedDealValue = Number(client.dealValue);
   const validStatuses = ["Lead", "Contacted", "Won", "Lost"];
@@ -28,6 +29,7 @@ function normalizeStoredClient(client, migrateLegacyDealValue) {
   };
 }
 
+// Stored clients are preferred so user changes survive page refreshes.
 function getStoredClients() {
   const savedClients = localStorage.getItem("crm_clients");
 
@@ -73,6 +75,7 @@ function getStoredClients() {
   }
 }
 
+// The API response is transformed into the Client model used by every page.
 async function fetchClientsFromApi() {
   try {
     const response = await fetch("https://dummyjson.com/users?limit=30");
@@ -112,6 +115,7 @@ async function fetchClientsFromApi() {
   }
 }
 
+// DummyJSON simulates writes; localStorage provides the real persistence.
 async function createClientInApi(clientData) {
   const response = await fetch("https://dummyjson.com/users/add", {
     method: "POST",
@@ -138,6 +142,7 @@ async function deleteClientFromApi(clientId) {
   }
 }
 
+// One shared loader keeps Dashboard and Clients on the same data source.
 async function loadClients() {
   const storedClients = getStoredClients();
 

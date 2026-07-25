@@ -17,27 +17,16 @@ const demoUser = {
 // The page uses JavaScript validation instead of browser validation.
 loginForm.noValidate = true;
 
-function getUsers() {
-  const savedUsers = localStorage.getItem("crm_users");
-  let users = [];
-
-  if (savedUsers) {
-    try {
-      const parsedUsers = JSON.parse(savedUsers);
-
-      users = Array.isArray(parsedUsers) ? parsedUsers : [];
-    } catch (error) {
-      console.error("Failed to read users:", error);
-    }
-  }
-
+// The documented demo account is added without replacing registered users.
+function getUsersWithDemoAccount() {
+  const users = getUsers();
   const demoUserExists = users.some(function (user) {
     return (user.email || "").toLowerCase() === demoUser.email;
   });
 
   if (!demoUserExists) {
     users.push(demoUser);
-    localStorage.setItem("crm_users", JSON.stringify(users));
+    saveUsers(users);
   }
 
   return users;
@@ -81,7 +70,7 @@ loginForm.addEventListener("submit", function (event) {
     return;
   }
 
-  const users = getUsers();
+  const users = getUsersWithDemoAccount();
   const email = emailInput.value.trim().toLowerCase();
   const password = passwordInput.value;
   const matchedUser = users.find(function (user) {
@@ -94,6 +83,7 @@ loginForm.addEventListener("submit", function (event) {
     return;
   }
 
+  // The session stores identity data only and never includes the password.
   const session = {
     userId: matchedUser.id,
     fullName: matchedUser.fullName,

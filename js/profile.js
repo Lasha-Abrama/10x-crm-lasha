@@ -38,38 +38,9 @@ const importClientsFileInput = document.querySelector(
 );
 const resetCrmDataButton = document.querySelector("#reset-crm-data-button");
 
-function getCurrentSession() {
-  const savedSession = localStorage.getItem("crm_session");
-
-  if (!savedSession) {
-    return null;
-  }
-
-  try {
-    return JSON.parse(savedSession);
-  } catch (error) {
-    return null;
-  }
-}
-
-function getUsers() {
-  const savedUsers = localStorage.getItem("crm_users");
-
-  if (!savedUsers) {
-    return [];
-  }
-
-  try {
-    const users = JSON.parse(savedUsers);
-
-    return Array.isArray(users) ? users : [];
-  } catch (error) {
-    return [];
-  }
-}
-
+// The session id identifies the matching registered user.
 function getCurrentUser() {
-  const session = getCurrentSession();
+  const session = getSession();
 
   if (!session) {
     return null;
@@ -115,6 +86,7 @@ function displayProfile() {
     : createdDate.toLocaleDateString();
 }
 
+// Edit mode starts with the user's current values and saves only changed fields.
 function populateProfileForm(user) {
   editProfileNameInput.value = user.fullName;
   editProfileCompanyInput.value = user.company || "";
@@ -146,26 +118,6 @@ function validateProfileForm() {
   return isValid;
 }
 
-function showMessage(message, type) {
-  const toastContainer = document.querySelector(".toast-container");
-  const toast = document.createElement("div");
-
-  toast.classList.add("toast");
-
-  if (type === "success") {
-    toast.classList.add("toast-success");
-  } else {
-    toast.classList.add("toast-error");
-  }
-
-  toast.textContent = message;
-  toastContainer.appendChild(toast);
-
-  setTimeout(function () {
-    toast.remove();
-  }, 3000);
-}
-
 function clearPasswordErrors() {
   currentPasswordError.textContent = "";
   newPasswordError.textContent = "";
@@ -180,6 +132,7 @@ function showPasswordError(input, errorElement, message) {
   errorElement.textContent = message;
 }
 
+// Export and import move only client records between browser storage origins.
 function exportClients() {
   const clients = getStoredClients();
 
@@ -259,6 +212,7 @@ function importClients(event) {
   fileReader.readAsText(selectedFile);
 }
 
+// Reset removes only client data, then restores the original API records.
 async function resetCrmData() {
   const shouldReset = confirm(
     "Are you sure you want to reset all CRM client data?"
@@ -312,7 +266,7 @@ editProfileForm.addEventListener("submit", function (event) {
     return;
   }
 
-  const session = getCurrentSession();
+  const session = getSession();
   const users = getUsers();
 
   if (!session) {
@@ -347,6 +301,7 @@ editProfileForm.addEventListener("submit", function (event) {
   showMessage("Profile updated ✓", "success");
 });
 
+// Password validation finishes before the stored user record is updated.
 changePasswordForm.addEventListener("submit", function (event) {
   event.preventDefault();
   clearPasswordErrors();
@@ -408,7 +363,7 @@ changePasswordForm.addEventListener("submit", function (event) {
     return;
   }
 
-  const session = getCurrentSession();
+  const session = getSession();
   const users = getUsers();
   const currentUserIndex = users.findIndex(function (user) {
     return Number(user.id) === Number(session.userId);

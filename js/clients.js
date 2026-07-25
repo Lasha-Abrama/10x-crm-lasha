@@ -33,6 +33,7 @@ const clients = [];
 let clientsReady = false;
 let selectedStatus = "all";
 
+// This page array is the working state; localStorage remains the persistent copy.
 function updateStatusSelectStyle(selectElement, status) {
   selectElement.classList.remove(
     "status-select-lead",
@@ -57,6 +58,7 @@ function showClientsLoading() {
   clientsLoadState.appendChild(loadingMessage);
 }
 
+// Loading and error states replace the list so stale clients are not visible.
 function showClientsError() {
   clientsReady = false;
   clients.length = 0;
@@ -109,6 +111,7 @@ async function loadClientsPage(forceFreshRequest) {
   }
 }
 
+// The modal helpers reset both form values and validation feedback.
 function clearAddClientErrors() {
   const formFields = addClientForm.querySelectorAll(
     ".form-input, .form-select"
@@ -208,26 +211,6 @@ function validateAddClientForm() {
   return isValid;
 }
 
-function showMessage(message, type) {
-  const toastContainer = document.querySelector(".toast-container");
-  const toast = document.createElement("div");
-
-  toast.classList.add("toast");
-
-  if (type === "success") {
-    toast.classList.add("toast-success");
-  } else {
-    toast.classList.add("toast-error");
-  }
-
-  toast.textContent = message;
-  toastContainer.appendChild(toast);
-
-  setTimeout(function () {
-    toast.remove();
-  }, 3000);
-}
-
 function getClientInitials(name) {
   const nameParts = (name || "").trim().split(" ").filter(function (part) {
     return part !== "";
@@ -262,6 +245,7 @@ function updateClientStatus(clientId, status) {
   applyClientFilters();
 }
 
+// Rendering rebuilds the visible cards and attaches actions to each client.
 function renderClients(visibleClients) {
   clientsList.textContent = "";
 
@@ -439,6 +423,7 @@ async function deleteClientFromList(clientId) {
   }
 }
 
+// Search, status, and sorting are combined without changing the original array.
 function getVisibleClients() {
   const searchText = clientSearchInput.value.trim().toLowerCase();
   const selectedSort = sortClientsSelect.value;
@@ -535,6 +520,7 @@ addClientButton.addEventListener("click", openAddClientModal);
 closeClientModalButton.addEventListener("click", closeAddClientModal);
 cancelAddClientButton.addEventListener("click", closeAddClientModal);
 
+// A valid client is posted to DummyJSON, then saved locally for persistence.
 addClientForm.addEventListener("submit", async function (event) {
   event.preventDefault();
   clearAddClientErrors();

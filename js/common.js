@@ -3,6 +3,49 @@ const themeToggleButton = document.getElementById("theme-toggle");
 const brandMark = document.querySelector(".brand-mark");
 const tenXModeStorageKey = "crm_ten_x_mode";
 
+// Shared storage helpers keep user data handling consistent on every page.
+function getUsers() {
+  const savedUsers = localStorage.getItem("crm_users");
+
+  if (!savedUsers) {
+    return [];
+  }
+
+  try {
+    const users = JSON.parse(savedUsers);
+
+    return Array.isArray(users) ? users : [];
+  } catch (error) {
+    console.error("Failed to read users:", error);
+    return [];
+  }
+}
+
+function saveUsers(users) {
+  localStorage.setItem("crm_users", JSON.stringify(users));
+}
+
+// Toasts are created here so every page uses the same notification behaviour.
+function showMessage(message, type, duration = 3000) {
+  const toastContainer = document.querySelector(".toast-container");
+
+  if (!toastContainer) {
+    return;
+  }
+
+  const toast = document.createElement("div");
+
+  toast.classList.add("toast");
+  toast.classList.add(type === "success" ? "toast-success" : "toast-error");
+  toast.textContent = message;
+  toastContainer.appendChild(toast);
+
+  setTimeout(function () {
+    toast.remove();
+  }, duration);
+}
+
+// The saved theme is applied through one attribute on the root HTML element.
 function getSavedTheme() {
   const savedTheme = localStorage.getItem("crm_theme");
 
@@ -41,6 +84,7 @@ function logout() {
   window.location.href = "index.html";
 }
 
+// 10X Mode is an optional persistent easter egg triggered from the logo.
 function showTenXMessage(message) {
   const toastContainer = document.querySelector(".toast-container");
 

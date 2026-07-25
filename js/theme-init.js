@@ -1,3 +1,4 @@
+// This runs in the document head to prevent a light flash before CSS loads.
 (function initializePageAppearance() {
   let theme = "dark";
   let tenXModeIsActive = false;

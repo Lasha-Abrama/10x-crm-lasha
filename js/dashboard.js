@@ -1,23 +1,9 @@
-function getDashboardSession() {
-  const savedSession = localStorage.getItem("crm_session");
-
-  if (!savedSession) {
-    return null;
-  }
-
-  try {
-    return JSON.parse(savedSession);
-  } catch (error) {
-    console.error("Could not read the current session:", error);
-    return null;
-  }
-}
-
 const dashboardContent = document.querySelector("#dashboard-content");
 const dashboardClientState = document.querySelector("#dashboard-client-state");
 
+// The dashboard greeting uses only the first word of the saved full name.
 function displayUserName() {
-  const session = getDashboardSession();
+  const session = getSession();
   const userNameElement = document.querySelector("#user-name");
   const fullName = session && session.fullName
     ? session.fullName.trim()
@@ -55,6 +41,7 @@ function displayCurrentDateTime() {
   setInterval(updateDateTime, 1000);
 }
 
+// Statistics are calculated from the same client array shown on the Clients page.
 function displayClientStatistics(clients) {
   const totalClients = clients.length;
   const activeDeals = clients.filter((client) => {
@@ -146,6 +133,7 @@ function getStatusClass(status) {
   return "status-lead";
 }
 
+// A copied array is sorted so the shared client order is not changed.
 function displayRecentClients(clients) {
   const recentClientsList = document.querySelector("#recent-clients-list");
   const emptyMessage = document.querySelector("#recent-clients-empty");
@@ -250,6 +238,7 @@ function showDashboardError() {
   dashboardClientState.appendChild(retryButton);
 }
 
+// Retry skips storage and asks the shared loader for a fresh API response.
 async function loadDashboardData(forceFreshRequest) {
   showDashboardLoading();
 

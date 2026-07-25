@@ -29,6 +29,7 @@ const notesList = document.querySelector("#notes-list");
 const notesEmptyMessage = document.querySelector("#notes-empty-message");
 const validStatuses = ["Lead", "Contacted", "Won", "Lost"];
 
+// The query-string id connects a client card to its details page.
 function getClientIdFromUrl() {
   const urlParameters = new URLSearchParams(window.location.search);
 
@@ -222,26 +223,7 @@ function validateEditForm() {
   return isValid;
 }
 
-function showMessage(message, type, duration = 3000) {
-  const toastContainer = document.querySelector(".toast-container");
-  const toast = document.createElement("div");
-
-  toast.classList.add("toast");
-
-  if (type === "success") {
-    toast.classList.add("toast-success");
-  } else {
-    toast.classList.add("toast-error");
-  }
-
-  toast.textContent = message;
-  toastContainer.appendChild(toast);
-
-  setTimeout(function () {
-    toast.remove();
-  }, duration);
-}
-
+// Notes are created with textContent so saved user text is treated as text.
 function renderNotes(notes) {
   notesList.textContent = "";
 
@@ -312,6 +294,7 @@ function displayClientDetails() {
   renderNotes(notes);
 }
 
+// The reminder uses an in-memory timer, so this page must remain open.
 function setClientReminder() {
   const client = getClientById();
 
@@ -390,6 +373,7 @@ deleteClientButton.addEventListener("click", deleteClient);
 reminderButton.addEventListener("click", setClientReminder);
 editClientStatusInput.addEventListener("change", updateEditStatusStyle);
 
+// Notes are stored inside only the selected client object.
 addNoteForm.addEventListener("submit", function (event) {
   event.preventDefault();
 
@@ -440,6 +424,7 @@ addNoteForm.addEventListener("submit", function (event) {
   showMessage("Note added successfully!", "success");
 });
 
+// Editing finds one array position and leaves the client's id and notes unchanged.
 editClientForm.addEventListener("submit", function (event) {
   event.preventDefault();
   clearEditErrors();

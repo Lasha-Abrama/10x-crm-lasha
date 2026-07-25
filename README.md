@@ -72,7 +72,7 @@ You can also create a separate account from the Sign Up page.
 │   ├── client-data.js      # Shared client storage and API loading
 │   ├── client-details.js   # Client details page behaviour
 │   ├── clients.js          # Client list and management behaviour
-│   ├── common.js           # Shared theme and Logout behaviour
+│   ├── common.js           # Shared storage, toast, theme, and Logout helpers
 │   ├── dashboard.js        # Dashboard display and statistics
 │   ├── guard.js            # Authentication guard
 │   ├── login.js            # Login validation and session creation

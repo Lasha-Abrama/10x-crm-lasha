@@ -8,47 +8,7 @@ const confirmPasswordInput = document.querySelector("#confirm-password");
 // The page now uses JavaScript validation instead of browser validation.
 signupForm.noValidate = true;
 
-function getUsers() {
-  const savedUsers = localStorage.getItem("crm_users");
-
-  if (!savedUsers) {
-    return [];
-  }
-
-  try {
-    const users = JSON.parse(savedUsers);
-
-    return Array.isArray(users) ? users : [];
-  } catch (error) {
-    console.error("Failed to read users:", error);
-    return [];
-  }
-}
-
-function saveUsers(users) {
-  localStorage.setItem("crm_users", JSON.stringify(users));
-}
-
-function showMessage(message, type) {
-  const toastContainer = document.querySelector(".toast-container");
-  const toast = document.createElement("div");
-
-  toast.classList.add("toast");
-
-  if (type === "success") {
-    toast.classList.add("toast-success");
-  } else {
-    toast.classList.add("toast-error");
-  }
-
-  toast.textContent = message;
-  toastContainer.appendChild(toast);
-
-  setTimeout(function () {
-    toast.remove();
-  }, 3000);
-}
-
+// Validation helpers clear old feedback and mark every invalid field together.
 function clearErrors() {
   const errorMessages = document.querySelectorAll(".error-message");
   const formInputs = document.querySelectorAll(".form-input");
@@ -108,6 +68,7 @@ function validateForm() {
   return isValid;
 }
 
+// A valid submission checks duplicates before creating and saving the user.
 signupForm.addEventListener("submit", function (event) {
   event.preventDefault();
   clearErrors();

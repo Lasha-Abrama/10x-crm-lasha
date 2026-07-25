@@ -1,3 +1,4 @@
+// A valid session object is required before protected page code can run.
 function getSession() {
   const savedSession = localStorage.getItem("crm_session");
 
@@ -25,6 +26,7 @@ function getSession() {
   }
 }
 
+// Protected and public pages redirect in opposite directions.
 function requireAuth() {
   const session = getSession();
 
