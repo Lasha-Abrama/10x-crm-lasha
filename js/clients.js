@@ -1,6 +1,11 @@
 const clientsList = document.querySelector("#clients-list");
 const clientsEmptyMessage = document.querySelector("#clients-empty-message");
 const clientsLoadState = document.querySelector("#clients-load-state");
+const clientsPagination = document.querySelector("#clients-pagination");
+const paginationSummary = document.querySelector("#pagination-summary");
+const paginationPages = document.querySelector("#pagination-pages");
+const previousPageButton = document.querySelector("#previous-page-button");
+const nextPageButton = document.querySelector("#next-page-button");
 const clientSearchInput = document.getElementById("client-search");
 const statusFilterButtons = document.querySelectorAll(
   ".status-filter-button"
@@ -30,8 +35,10 @@ const newClientDealValueError = document.getElementById(
 );
 const validClientStatuses = ["Lead", "Contacted", "Won", "Lost"];
 const clients = [];
+const clientsPerPage = 10;
 let clientsReady = false;
 let selectedStatus = "all";
+let currentClientPage = 1;
 
 // This page array is the working state; localStorage remains the persistent copy.
 function updateStatusSelectStyle(selectElement, status) {
@@ -49,6 +56,7 @@ function showClientsLoading() {
   clientsList.textContent = "";
   clientsList.classList.add("hidden");
   clientsEmptyMessage.classList.remove("visible");
+  clientsPagination.classList.add("hidden");
   clientsLoadState.textContent = "";
   clientsLoadState.classList.remove("hidden");
   addClientButton.disabled = true;
@@ -65,6 +73,7 @@ function showClientsError() {
   clientsList.textContent = "";
   clientsList.classList.add("hidden");
   clientsEmptyMessage.classList.remove("visible");
+  clientsPagination.classList.add("hidden");
   clientsLoadState.textContent = "";
   clientsLoadState.classList.remove("hidden");
   addClientButton.disabled = true;
@@ -484,17 +493,83 @@ function getVisibleClients() {
   return sortedClients;
 }
 
+// Pagination renders only ten clients while keeping filters applied to the full list.
+function renderPagination(totalClients) {
+  paginationPages.textContent = "";
+
+  if (totalClients === 0) {
+    clientsPagination.classList.add("hidden");
+    return;
+  }
+
+  const totalPages = Math.ceil(totalClients / clientsPerPage);
+  const firstVisibleClient = (currentClientPage - 1) * clientsPerPage + 1;
+  const lastVisibleClient = Math.min(
+    currentClientPage * clientsPerPage,
+    totalClients
+  );
+
+  clientsPagination.classList.remove("hidden");
+  paginationSummary.textContent =
+    `Showing ${firstVisibleClient}–${lastVisibleClient} of ${totalClients}`;
+  previousPageButton.disabled = currentClientPage === 1;
+  nextPageButton.disabled = currentClientPage === totalPages;
+
+  for (let pageNumber = 1; pageNumber <= totalPages; pageNumber += 1) {
+    const pageButton = document.createElement("button");
+
+    pageButton.type = "button";
+    pageButton.classList.add("pagination-page-button");
+    pageButton.textContent = pageNumber;
+    pageButton.setAttribute("aria-label", `Go to page ${pageNumber}`);
+
+    if (pageNumber === currentClientPage) {
+      pageButton.classList.add("active");
+      pageButton.setAttribute("aria-current", "page");
+    }
+
+    pageButton.addEventListener("click", function () {
+      currentClientPage = pageNumber;
+      applyClientFilters();
+    });
+
+    paginationPages.appendChild(pageButton);
+  }
+}
+
 function applyClientFilters() {
   if (!clientsReady) {
     return;
   }
 
-  renderClients(getVisibleClients());
+  const visibleClients = getVisibleClients();
+  const totalPages = Math.max(
+    1,
+    Math.ceil(visibleClients.length / clientsPerPage)
+  );
+
+  if (currentClientPage > totalPages) {
+    currentClientPage = totalPages;
+  }
+
+  const firstClientIndex = (currentClientPage - 1) * clientsPerPage;
+  const clientsForCurrentPage = visibleClients.slice(
+    firstClientIndex,
+    firstClientIndex + clientsPerPage
+  );
+
+  renderClients(clientsForCurrentPage);
+  renderPagination(visibleClients.length);
+}
+
+function resetPaginationAndApplyFilters() {
+  currentClientPage = 1;
+  applyClientFilters();
 }
 
 if (clientSearchInput && sortClientsSelect) {
-  clientSearchInput.addEventListener("input", applyClientFilters);
-  sortClientsSelect.addEventListener("change", applyClientFilters);
+  clientSearchInput.addEventListener("input", resetPaginationAndApplyFilters);
+  sortClientsSelect.addEventListener("change", resetPaginationAndApplyFilters);
 }
 
 newClientStatusInput.addEventListener("change", function () {
@@ -512,8 +587,24 @@ statusFilterButtons.forEach(function (filterButton) {
       button.setAttribute("aria-pressed", String(isActive));
     });
 
-    applyClientFilters();
+    resetPaginationAndApplyFilters();
   });
+});
+
+previousPageButton.addEventListener("click", function () {
+  if (currentClientPage > 1) {
+    currentClientPage -= 1;
+    applyClientFilters();
+  }
+});
+
+nextPageButton.addEventListener("click", function () {
+  const totalPages = Math.ceil(getVisibleClients().length / clientsPerPage);
+
+  if (currentClientPage < totalPages) {
+    currentClientPage += 1;
+    applyClientFilters();
+  }
 });
 
 addClientButton.addEventListener("click", openAddClientModal);
@@ -588,6 +679,7 @@ addClientForm.addEventListener("submit", async function (event) {
     localStorage.setItem("crm_clients", JSON.stringify(clients));
 
     closeAddClientModal();
+    currentClientPage = 1;
     applyClientFilters();
     showMessage("Client added ✓", "success");
   } catch (error) {

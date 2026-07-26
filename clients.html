@@ -134,6 +134,34 @@
         class="data-state hidden"
         aria-live="polite"
       ></div>
+
+      <nav
+        id="clients-pagination"
+        class="pagination hidden"
+        aria-label="Client pagination"
+      >
+        <p id="pagination-summary" class="pagination-summary text-muted"></p>
+
+        <div class="pagination-controls">
+          <button
+            type="button"
+            id="previous-page-button"
+            class="btn btn-secondary pagination-button"
+          >
+            Previous
+          </button>
+
+          <div id="pagination-pages" class="pagination-pages"></div>
+
+          <button
+            type="button"
+            id="next-page-button"
+            class="btn btn-secondary pagination-button"
+          >
+            Next
+          </button>
+        </div>
+      </nav>
     </section>
   </main>
 
