@@ -347,21 +347,26 @@ img {
    5. Authentication pages
 -------------------------------------------------- */
 
+.auth-document,
+.auth-page {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+}
+
+.auth-document::-webkit-scrollbar,
+.auth-page::-webkit-scrollbar {
+  display: none;
+}
+
 .auth-page {
   position: relative;
   min-height: 100vh;
   overflow-x: hidden;
   overflow-y: auto;
-  scrollbar-width: none;
-  -ms-overflow-style: none;
   background:
     radial-gradient(circle at 8% 15%, rgba(75, 202, 255, 0.2), transparent 24rem),
     radial-gradient(circle at 92% 90%, rgba(139, 92, 246, 0.22), transparent 26rem),
     var(--color-background);
-}
-
-.auth-page::-webkit-scrollbar {
-  display: none;
 }
 
 .auth-layout {
