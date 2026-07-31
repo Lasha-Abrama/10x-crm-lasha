@@ -225,10 +225,10 @@ Codex
 > Add client JSON export and import, document a demo email and password, and verify the PRD rule for generated deal values.
 
 **Result:**
-The Profile page now exports and imports only the `crm_clients` array, so accounts and themes are not overwritten. A built-in demo account provides immediate access, and a one-time migration gives older DummyJSON clients varied deal values between 1,000 and 10,000.
+The Profile page now exports and imports the current user's client list, so other accounts and themes are not overwritten. A built-in demo account provides immediate access, and API clients receive generated deal values between 1,000 and 10,000.
 
 **What changed and what I learned:**
-I learned that localStorage is isolated by origin, so localhost and Vercel cannot share data automatically. A JSON file provides a simple frontend-only transfer method, while a migration flag prevents old default values from being changed repeatedly.
+I learned that localStorage is isolated by origin, so localhost and Vercel cannot share data automatically. A JSON file provides a simple frontend-only transfer method, and each client can be connected to an account with an `ownerId`.
 
 ## Prompt Improvement Example
 
@@ -238,15 +238,15 @@ I learned that localStorage is isolated by origin, so localhost and Vercel canno
 
 ### Problem
 
-The prompt sounded reasonable, but it was based on an assumed next feature rather than a confirmed PRD requirement. After checking the PRD again, pagination was not required. Implementing it would have added extra controls, state, and testing that were outside the project scope.
+The prompt was useful because the client list could become long after loading 30 API users. Pagination was added carefully so it worked together with search, status filtering, and sorting.
 
 ### Improved Prompt
 
-> Review the PRD before changing the Clients page. Keep the existing search, status filter, and sorting working. Do not implement pagination because it is not required.
+> Add simple pagination to the Clients page. Keep the existing search, status filter, and sorting working together.
 
 ### Improvement
 
-The improved prompt clearly defined both the allowed work and the excluded feature. The pagination prompt was generated, but pagination was not implemented. This check prevented unnecessary code and led to later prompts being kept strictly aligned with the PRD.
+The improved prompt clearly defined the allowed work and protected the existing list behaviour. Pagination now shows 10 clients per page and recalculates after search, filter, sort, add, or delete changes.
 
 ## Critical Evaluation Example
 
@@ -269,4 +269,4 @@ The response was not accepted blindly. The PRD was checked again, and the curren
 
 ## Final Reflection
 
-AI made development faster by helping divide a large project into smaller, understandable tasks. Precise prompts produced better answers because they clearly stated the required behavior and limits. However, every response still needed verification through code review, manual testing, and comparison with the PRD. Checking the PRD prevented unnecessary features such as pagination and exposed incorrect assumptions about statuses and the client data model. The most important result was not copying generated code, but understanding why the final code works and being able to explain it confidently.
+AI made development faster by helping divide a large project into smaller, understandable tasks. Precise prompts produced better answers because they clearly stated the required behavior and limits. However, every response still needed verification through code review, manual testing, and comparison with the PRD. Checking the PRD exposed incorrect assumptions about statuses, pagination, and the client data model. The most important result was not copying generated code, but understanding why the final code works and being able to explain it confidently.

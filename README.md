@@ -13,6 +13,7 @@
 - **Search:** Find clients by name or company while typing.
 - **Filtering:** Filter clients by Lead, Contacted, Won, or Lost status.
 - **Sorting:** Sort clients by date, name, or deal value in either direction.
+- **Pagination:** Show 10 clients per page with Previous, Next, and page number controls.
 - **Client details:** Review a selected client's avatar, contact information, status, deal value, and account date.
 - **Notes:** Add dated notes to a selected client.
 - **Reminder:** Schedule a one-minute follow-up toast for a client during the current page session.
@@ -91,30 +92,30 @@ The application uses LocalStorage for browser-based persistence:
 
 - `crm_users` stores registered user accounts.
 - `crm_session` stores the currently logged-in user's session.
-- `crm_clients` stores client records and their notes.
+- `crm_clients` stores client records and their notes. Each client has an `ownerId` so every logged-in account sees its own CRM data.
+- `crm_client_owners_initialized` stores which accounts already received their initial API client list.
 - `crm_theme` stores the selected light or dark theme.
 - `crm_ten_x_mode` stores whether the hidden neon theme is active.
-- `crm_deal_values_migrated` records completion of the legacy deal-value update.
 
 This data belongs only to the current browser and device. Because this is a frontend-only educational project, its LocalStorage authentication and plain-text passwords are not suitable for a production application.
 
 ## Client Data Transfer
 
 Open the Profile page and use **Export Clients** to download the current
-`crm_clients` array as a JSON file. Open the other version of the application,
-choose **Import Clients**, and select that file. Importing replaces the client
-array on that browser origin, while accounts, sessions, and themes remain
-unchanged.
+user's client list as a JSON file. Open the other version of the application,
+choose **Import Clients**, and select that file. Importing replaces only the
+current user's clients on that browser origin, while other accounts, sessions,
+and themes remain unchanged.
 
 ## API
 
-When `crm_clients` does not contain a valid saved client array, the application loads initial client data from:
+When the current user does not have an initialized client list, the application loads initial client data from:
 
 ```text
 https://dummyjson.com/users?limit=30
 ```
 
-The returned users are converted into the project's client format and saved in LocalStorage. If loading fails, the Clients page displays an error message and a Retry button that starts a fresh request.
+The returned users are converted into the project's client format, connected to the logged-in user's `ownerId`, and saved in LocalStorage. If loading fails, the Clients page displays an error message and a Retry button that starts a fresh request.
 
 ## Screens
 
@@ -128,7 +129,6 @@ The returned users are converted into the project's client format and saved in L
 
 - Replace LocalStorage authentication with a secure backend and hashed passwords.
 - Add server-side data persistence so accounts and clients can be shared across devices.
-- Add pagination for larger client lists.
 - Store configurable reminders so they remain available after leaving or refreshing the page.
 - Add automated tests for validation, storage, API errors, and client management.
 

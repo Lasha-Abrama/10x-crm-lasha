@@ -205,14 +205,13 @@ function validateAddClientForm() {
   const dealValue = Number(dealValueText);
 
   if (
-    dealValueText === "" ||
-    Number.isNaN(dealValue) ||
-    dealValue <= 0
+    dealValueText !== "" &&
+    (Number.isNaN(dealValue) || dealValue < 0)
   ) {
     showAddClientError(
       newClientDealValueInput,
       newClientDealValueError,
-      "Deal value must be a positive number"
+      "Deal value must be 0 or greater"
     );
     isValid = false;
   }
@@ -250,7 +249,7 @@ function updateClientStatus(clientId, status) {
   }
 
   client.status = status;
-  localStorage.setItem("crm_clients", JSON.stringify(clients));
+  saveClientsForCurrentUser(clients);
   applyClientFilters();
 }
 
@@ -423,7 +422,7 @@ async function deleteClientFromList(clientId) {
       clients.push(client);
     });
 
-    localStorage.setItem("crm_clients", JSON.stringify(clients));
+    saveClientsForCurrentUser(clients);
     applyClientFilters();
     showMessage("Client deleted", "success");
   } catch (error) {
@@ -643,7 +642,9 @@ addClientForm.addEventListener("submit", async function (event) {
     phone: newClientPhoneInput.value.trim(),
     company: newClientCompanyInput.value.trim(),
     status: newClientStatusInput.value,
-    dealValue: Number(newClientDealValueInput.value),
+    dealValue: newClientDealValueInput.value.trim() === ""
+      ? 0
+      : Number(newClientDealValueInput.value),
   };
 
   try {
@@ -658,6 +659,7 @@ addClientForm.addEventListener("submit", async function (event) {
         : Date.now();
     const newClient = {
       id: clientId,
+      ownerId: getCurrentClientOwnerId(),
       name: clientData.name,
       email: clientData.email,
       phone: clientData.phone,
@@ -676,7 +678,7 @@ addClientForm.addEventListener("submit", async function (event) {
     });
 
     clients.unshift(newClient);
-    localStorage.setItem("crm_clients", JSON.stringify(clients));
+    saveClientsForCurrentUser(clients);
 
     closeAddClientModal();
     currentClientPage = 1;

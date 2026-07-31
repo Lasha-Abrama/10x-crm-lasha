@@ -338,7 +338,7 @@ async function deleteClient() {
 
   try {
     await deleteClientFromApi(clientId);
-    localStorage.setItem("crm_clients", JSON.stringify(updatedClients));
+    saveClientsForCurrentUser(updatedClients);
     showMessage("Client deleted", "success");
 
     setTimeout(function () {
@@ -415,7 +415,7 @@ addNoteForm.addEventListener("submit", function (event) {
   };
 
   clients[clientIndex].notes.push(newNote);
-  localStorage.setItem("crm_clients", JSON.stringify(clients));
+  saveClientsForCurrentUser(clients);
 
   noteTextInput.value = "";
   noteError.textContent = "";
@@ -445,15 +445,34 @@ editClientForm.addEventListener("submit", function (event) {
   }
 
   const dealValueText = editClientDealValueInput.value.trim();
+  const editedEmail = editClientEmailInput.value.trim().toLowerCase();
+  const emailAlreadyExists = clients.some(function (client) {
+    return (
+      Number(client.id) !== clientId &&
+      (client.email || "").trim().toLowerCase() === editedEmail
+    );
+  });
+
+  if (emailAlreadyExists) {
+    const emailError =
+      editClientEmailInput.parentElement.querySelector(".error-message");
+
+    showEditError(
+      editClientEmailInput,
+      emailError,
+      "A client with this email already exists.",
+    );
+    return;
+  }
 
   clients[clientIndex].name = editClientNameInput.value.trim();
-  clients[clientIndex].email = editClientEmailInput.value.trim().toLowerCase();
+  clients[clientIndex].email = editedEmail;
   clients[clientIndex].company = editClientCompanyInput.value.trim();
   clients[clientIndex].status = editClientStatusInput.value;
   clients[clientIndex].dealValue =
     dealValueText === "" ? "" : Number(dealValueText);
 
-  localStorage.setItem("crm_clients", JSON.stringify(clients));
+  saveClientsForCurrentUser(clients);
 
   displayClientDetails();
   showMessage("Client updated successfully!", "success");

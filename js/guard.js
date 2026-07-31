@@ -12,7 +12,8 @@ function getSession() {
     if (
       !session ||
       typeof session !== "object" ||
-      session.userId === undefined
+      session.userId === undefined ||
+      session.userId === null
     ) {
       localStorage.removeItem("crm_session");
       return null;

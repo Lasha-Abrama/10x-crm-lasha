@@ -206,14 +206,10 @@ function importClients(event) {
       }
 
       const normalizedClients = importedClients.map(function (client) {
-        return normalizeStoredClient(client, true);
+        return normalizeStoredClient(client, getCurrentClientOwnerId());
       });
 
-      localStorage.setItem(
-        "crm_clients",
-        JSON.stringify(normalizedClients)
-      );
-      localStorage.setItem("crm_deal_values_migrated", "true");
+      saveClientsForCurrentUser(normalizedClients);
       showMessage("Clients imported successfully!", "success");
     } catch (error) {
       console.error("Could not import clients:", error);
@@ -245,7 +241,7 @@ async function resetCrmData() {
   resetCrmDataButton.textContent = "Resetting...";
 
   try {
-    localStorage.removeItem("crm_clients");
+    saveClientsForCurrentUser([]);
     await fetchClientsFromApi();
     showMessage("CRM data reset successfully!", "success");
   } catch (error) {
